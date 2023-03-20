@@ -1,38 +1,60 @@
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  min-height: 100vh;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  background-image: linear-gradient(-130deg, #CCDAD1,#788585 50%,#6F6866);
 }
 
-.App-link {
-  color: #61dafb;
+.auth-form-container, .login-form, .register-form {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Arial Narrow', Arial, sans-serif;
+  font-weight: bold;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.auth-form-container {
+  padding: 5rem;
+  border: 1px solid white;
+  border-radius: 10px;
+  margin: 0.5rem;
+}
+
+label {
+  text-align: left;
+  padding: 0.25rem 0;
+  color: #38302E;
+}
+
+input {
+  margin: 0.5rem 0;
+  padding: 1rem;
+  border: none;
+  border-radius: 10px;
+}
+
+button {
+  border: none;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #38302E;
+  font-weight: bold;
+}
+
+button:active {
+  color: #9CAEA9;
+}
+
+.link-btn {
+  background: none;
+  color: #38302E;
+  text-decoration: underline;
+}
+
+.auth-title{
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  color: #38302E;
 }
