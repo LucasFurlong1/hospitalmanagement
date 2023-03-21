@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import { Link } from 'react-router-dom'
 export const Login = (props) => {
     const [username, setUsername] = useState('');
     const [pass, setPass] = useState('');
@@ -16,9 +17,12 @@ export const Login = (props) => {
                 <input value={username} onChange={(e) => setUsername(e.target.value)} type="username" placeholder="username" id="username" name="username" />
                 <label htmlFor="password">Password: </label>
                 <input value={pass} onChange={(e) => setPass(e.target.value)} type="password" placeholder="**********" id="password" name="password" />
-                <button type="submit">Log In</button>
+                <Link to="/doctor"><button type="submit" className="submit-button">Log In</button></Link>
+
             </form>
-            <button className="link-btn" onClick={() => props.onFormSwitch('register')}>Need to register with the hospital? Press here</button>
+            <Link to="/register">
+                <button className="link-btn" >Need to register with the hospital? Press here</button>
+            </Link>
         </div>
     )
 }

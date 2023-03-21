@@ -34,7 +34,7 @@ input {
   border-radius: 10px;
 }
 
-button {
+button  {
   border: none;
   background-color: white;
   padding: 20px;
@@ -48,6 +48,10 @@ button:active {
   color: #9CAEA9;
 }
 
+.submit-button {
+  width: 100%;
+}
+
 .link-btn {
   background: none;
   color: #38302E;
@@ -57,4 +61,8 @@ button:active {
 .auth-title{
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   color: #38302E;
+}
+
+.side_nav {
+  background-color: rgb(44, 44, 44) !important;
 }
