@@ -30,9 +30,9 @@ export const Doctor = () => {
                             <div className="block-1">
                                 <label className="name-label">Name: </label>
                                 <p className="patient-name" key={data.id}>{data.name}</p>
-                                <label>Email: </label>
+                                <label className="doc-lbl">Email: </label>
                                 <p className="patient-email" key={data.id}>{data.email}</p>
-                                <label>Phone: </label>
+                                <label className="doc-lbl">Phone: </label>
                                 <p className="patient-phone" key={data.id}>{data.phone}</p>
                             </div>
 

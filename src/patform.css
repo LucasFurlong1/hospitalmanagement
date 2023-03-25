@@ -1,0 +1,32 @@
+.doctor-info-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.doctor-info-main-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    border: 2px solid white;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.pat-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.pat-p {
+    margin-right: 0.5rem;
+    margin-left: 0.5rem;
+}
+
+.pat-lbl {
+    font-weight: bold;
+    font-size: large;
+}
