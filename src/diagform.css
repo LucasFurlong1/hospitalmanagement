@@ -1,0 +1,86 @@
+
+
+.diag-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-wrap: wrap;
+    font-family: 'Arial Narrow', Arial, sans-serif;
+    font-weight: bold;
+}
+
+
+.diag-form {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid white;
+    border-radius: 2rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+  
+  .diag-1 {
+    border-bottom: 2px solid white;
+    padding-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+  }
+  
+  .diag-2 {
+    border-bottom: 2px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .diag-3 {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    flex-direction: column;
+    border-bottom: 2px solid white;
+    padding: 1rem;
+  }
+  
+  .diag-delete {
+    padding: 1rem;
+    margin: 1rem;
+  }
+  
+  .diag-update {
+    padding: 1rem;
+    margin: 1rem;
+  }
+  
+  .diag-long {
+  
+    margin: 0.5rem;
+  }
+
+  button {
+    font-family: 'Arial Narrow', Arial, sans-serif;
+    font-weight: bold;
+  }
+
+  select {
+    border-radius: 5px;
+    min-width: 15rem;
+    margin: 0.5rem;
+  }
+
+  .select-label {
+    margin: 0.5rem;
+  }
+
+  textarea {
+    height: 150px;
+    width: 500px;
+    resize: none;
+  }

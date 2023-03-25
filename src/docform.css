@@ -1,0 +1,55 @@
+.side_nav {
+    background-color: grey !important;
+    height: 100vh !important;
+    position: fixed !important;
+  }
+  
+  .patient-block {
+    border-radius: 5px;
+    border: 2px solid white;
+    margin: 1rem;
+  }
+  
+  
+  .doctor-data-container {
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin-left: 5rem;
+    margin-right: 2rem;
+    order: 1;
+  }
+  
+  .patient-block, .patient-name, .patient-email, .doctor-data-container{
+    display: flex;
+  }
+  
+  .patient-name, .patient-email, .patient-phone {
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .title {
+    font-size: x-large;
+    font-weight: bold;
+  }
+
+  .patient-phone, .patient-name {
+    white-space: nowrap;
+  }
+
+  .block-1 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .name-label {
+    padding-left: 1rem;
+  }
