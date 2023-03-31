@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SideNavBar from "./sidenav";
 import 'react-chatbot-kit/build/main.css'
 import "../App.css"
@@ -7,8 +7,13 @@ import Chatbot from "react-chatbot-kit";
 import ActionProvider from '../ActionProvider';
 import MessageParser from "../MessageParser";
 import config from "../chatConfig";
+import axios from "axios";
 
 export const Patient = () => {
+
+
+
+
     return (
         <div className="pat-container">
             <div className="doctor-info-container">
@@ -22,9 +27,7 @@ export const Patient = () => {
                     <p className="pat-p">Doctor, Doctor M.D.</p>
                 </div>
             </div>
-            <header className="chatbot-header">
-                <Chatbot config={config} actionProvider={ActionProvider} messageParser={MessageParser} />
-            </header>
+            <Chatbot config={config} actionProvider={ActionProvider} messageParser={MessageParser}/>
             <SideNavBar />
         </div>
     );

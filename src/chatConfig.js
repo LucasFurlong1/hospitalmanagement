@@ -1,8 +1,9 @@
 import { createChatBotMessage } from "react-chatbot-kit";
 import BotAvatar from "./BotAvatar";
+import ChatResponse from "./chatResponse";
 
 const config = {
-  initialMessages: [createChatBotMessage(`Hello! I am your personal health assistant! Please message me your name to start.`)],
+  initialMessages: [createChatBotMessage('Hello, enter your name like this "my name is alex"')],
   botName: "HealthBot",
   customComponents: {
     botAvatar: (props) => <BotAvatar {...props} />
@@ -14,7 +15,13 @@ const config = {
     chatButton: {
       backgroundColor: "#808080"
     }
-  }
+  },
+  state: {
+    access: []
+  },
+  widgets: [
+
+  ]
 }
 
 export default config;
