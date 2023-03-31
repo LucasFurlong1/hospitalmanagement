@@ -84,7 +84,7 @@ class MessageParser {
           this.actionProvider.chatHandler(lower)
           break
         }
-        if(lastBotMessages[i].message.includes("please enter your weight")) {
+        if(lastBotMessages[i].message.includes("Now please enter your weight")) {
           this.actionProvider.chatHandler(lower)
           break
         }
@@ -144,12 +144,23 @@ class MessageParser {
           this.actionProvider.chatHandler(lower)
           break
         }
+        if(lastBotMessages[i].message.includes("so short sentences work best")) {
+          this.actionProvider.chatHandler(lower)
+          break
+        }
+        if(lastBotMessages[i].message.includes("Please note, this is not a diagnosis. Always visit a doctor if you are in doubt")) {
+          this.actionProvider.chatHandler(lower)
+          break
+        }
+        if(lastBotMessages[i].message.includes("Click below for your")) {
+          this.actionProvider.chatHandler(lower)
+          break
+        }
         if(lastBotMessages[i].message.includes("I can only provide information for people over")) {
           this.actionProvider.tooYoungHandler()
           break
         }
-        console.log(i)
-        if(i === lastBotMessages.length){
+        if(i === lastBotMessages.length - 1){
           this.actionProvider.userMessageErrorHandler()
           break
         }
