@@ -3,7 +3,7 @@ import BotAvatar from "./BotAvatar";
 import ChatResponse from "./chatResponse";
 
 const config = {
-  initialMessages: [createChatBotMessage('Hello, enter your name like this "my name is alex"')],
+  initialMessages: [createChatBotMessage('Hello, enter your name like this "my name is alex" REMINDER: The BMI Calculator does not work! This is on the Healthily (the company who let us use their API)')],
   botName: "HealthBot",
   customComponents: {
     botAvatar: (props) => <BotAvatar {...props} />

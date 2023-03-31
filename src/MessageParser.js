@@ -58,6 +58,16 @@ class MessageParser {
       login = true
       console.log(lastBotMessages)
       for(let i = 0; i<lastBotMessages.length; i++) {
+        if(lastBotMessages[i].message.includes("is an indicator of whether you are")) {
+          this.actionProvider.BMIHandler()
+          this.actionProvider.chatHandler(lower)
+          break
+        }
+        if(lastBotMessages[i].message.includes("Before I calculate your BMI")) {
+          this.actionProvider.BMIHandler()
+          this.actionProvider.chatHandler(lower)
+          break
+        }
         if(login===true && lastBotMessages[i].message.includes(lower)){
           console.log(i)
           this.actionProvider.chatHandler(lower)

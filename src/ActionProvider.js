@@ -43,6 +43,10 @@ class ActionProvider {
     }
   }
 
+  BMIHandler = () => {
+    const message = this.createChatbotMessage("We're sorry! This doesn't seem to work for the API. You can try it anyways")
+    this.setChatbotMessage(message)
+  }
 
   tooYoungHandler = () => {
     const message = this.createChatBotMessage("If you would like to restart, log out and log back in!")
