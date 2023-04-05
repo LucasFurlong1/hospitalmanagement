@@ -7,11 +7,15 @@ import Chatbot from "react-chatbot-kit";
 import ActionProvider from '../ActionProvider';
 import MessageParser from "../MessageParser";
 import config from "../chatConfig";
-import axios from "axios";
 
 export const Patient = () => {
 
 
+    useEffect(() => {
+        fetch("https://localhost:44304/User/GetUsers").then(response => response.json()).then((response) => {
+            console.log(response)
+        })
+    },[])
 
 
     return (
