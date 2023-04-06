@@ -1,34 +1,201 @@
 ﻿using ABC_Hospital_Web_Service.Models;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
+using Microsoft.Extensions.Configuration;
 
 namespace ABC_Hospital_Web_Service.Services
 {
+    /* To Do:
+     * Add better error handling
+     * Make database name and connnect string fetchable from appsettings
+     * Add insert statements for objects
+     */
     public class SQLInterface
     {
         private string ConnectString;
         OleDbConnection DataBaseConnection;
-        //private OleDbConnection conn;
-        //ConnectionString = "Driver={Microsoft Access Driver (*.mdb, *.accdb)}; Dbq=C:\\Users\\Matt W\\Desktop\\ABC_Hospital_Database.accdb; Uid = Admin; Pwd =; ",
+        //private IConfiguration Configuration;
+
         public SQLInterface()
         {
-            ConnectString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\\Users\\Matt W\\Desktop\\ABC_Hospital_Database.accdb;Persist Security Info=False;";
-            DataBaseConnection = new OleDbConnection(ConnectString);
-            DataBaseConnection.Open();
+            //Configuration = new IConfiguration();
+            string databaseName = "ABC_Hospital_Database.accdb";// Configuration.GetSection("ConnectionStrings")["Database"];
+            ConnectString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=@;Persist Security Info=False;";// Configuration.GetSection("ConnectionStrings")["AccessConnectString"];
+            bool found = false;
+            string searchForDatabase = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            searchForDatabase = System.IO.Path.GetDirectoryName(searchForDatabase);
+            while (!System.IO.File.Exists(searchForDatabase + "\\" + databaseName) && searchForDatabase.Length > 4)
+            {
+                searchForDatabase = System.IO.Path.GetDirectoryName(searchForDatabase);
+            }
+            if (System.IO.File.Exists(searchForDatabase + "\\" + databaseName))
+            {
+                found = true;
+                searchForDatabase += "\\" + databaseName;
+            }
+            if (found)
+            {
+                ConnectString = ConnectString.Replace("@", searchForDatabase);
+                DataBaseConnection = new OleDbConnection(ConnectString);
+                DataBaseConnection.Open();
+            }
+            else
+            {
+                throw new ArgumentException("Database with the name of " + databaseName + " could not be found. Please verify the name is correct in appsettings.json and that it is in the project's directory.");
+            }
+        }
+
+        public UserCredObject RetrieveUserCred(string username)
+        {
+            string sqlString =
+                "SELECT Password_Hash FROM [User] WHERE Username='" + username + "';";
+
+            OleDbCommand command = new OleDbCommand();
+
+            command.Connection = DataBaseConnection;
+            command.CommandText = sqlString;
+
+            try
+            {
+                using (OleDbDataReader reader = command.ExecuteReader())
+                {
+                    UserCredObject user = new UserCredObject();
+                    while (reader.Read())
+                    {
+                        user.Username = username;
+                        user.Password = reader.GetString(0);
+                    }
+                    reader.Close();
+                    return user;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                //return ex.Message;
+            }
+            return null;
+        }
+
+        public void StoreUserCred(UserCredObject user)
+        {
+            string sqlString =
+                "Update [User] SET Password_Hash = '" + user.Password + "' WHERE Username = '" + user.Username + "';";
+            OleDbCommand command = new OleDbCommand();
+
+            command.Connection = DataBaseConnection;
+            command.CommandText = sqlString;
+
+            try
+            {
+                command.ExecuteNonQuery();
+                { }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                //return ex.Message;
+            }
+            return;
+        }
+
+        public void UpdateUserIdentitySession(string username)
+        {
+            // First Check to see if session data exists
+            bool firstTime = false;
+            string sqlString =
+                "SELECT Username FROM [Identity_Session] WHERE Username = '" + username + "';";
+
+            OleDbCommand command = new OleDbCommand();
+
+            command.Connection = DataBaseConnection;
+            command.CommandText = sqlString;
+
+            try
+            {
+                using (OleDbDataReader reader = command.ExecuteReader())
+                {
+                    List<string> userSessions = new List<string>();
+                    while (reader.Read())
+                    {
+                        string temp = reader.GetString(0);
+                        userSessions.Add(temp);
+                    }
+                    reader.Close();
+                    if (userSessions.Count < 1)
+                    {
+                        firstTime = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                //return ex.Message;
+            }
+
+            // If it is the user's first time, create a new record
+            if (firstTime)
+            {
+                sqlString =
+                    "INSERT INTO [Identity_Session] VALUES ('" + username + "', '"
+                    + DateTime.Now + "', '" + DateTime.Now.AddMinutes(30) + "');";
+                command = new OleDbCommand(); //Username = '" + username + "', 
+
+                command.Connection = DataBaseConnection;
+                command.CommandText = sqlString;
+
+                try
+                {
+                    command.ExecuteNonQuery();
+                    { }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    //return ex.Message;
+                }
+
+            }
+
+            // Otherwise, update the existing record
+            else
+            {
+                sqlString =
+                    "Update [Identity_Session] SET Session_Start = '" + DateTime.Now + "', Session_Expire = '" + DateTime.Now.AddMinutes(30)
+                    + "' WHERE Username = '" + username + "';";
+                command = new OleDbCommand(); //Username = '" + username + "', 
+
+                command.Connection = DataBaseConnection;
+                command.CommandText = sqlString;
+
+                try
+                {
+                    command.ExecuteNonQuery();
+                    { }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    //return ex.Message;
+                }
+            }
+            return;
         }
 
         public List<UserObject> RetrieveUsers()
         {
-            string queryString =
+            string sqlString =
                 "SELECT * FROM [User] ORDER BY Username;";
 
             OleDbCommand command = new OleDbCommand();
 
             command.Connection = DataBaseConnection;
-            command.CommandText = queryString;
+            command.CommandText = sqlString;
 
             try
             {
@@ -61,17 +228,17 @@ namespace ABC_Hospital_Web_Service.Services
                 //return ex.Message;
             }
             return null;
-            
+
         }
 
         public List<UserObject> RetrieveUsersFiltered(string fieldName, string value)
         {
-            string queryString =
+            string sqlString =
                 "SELECT * FROM [User] WHERE " + fieldName + "=\"" + value + "\" ORDER BY Username;";
 
             OleDbCommand command = new OleDbCommand();
             command.Connection = DataBaseConnection;
-            command.CommandText = queryString;
+            command.CommandText = sqlString;
 
             try
             {
@@ -108,12 +275,12 @@ namespace ABC_Hospital_Web_Service.Services
 
         public List<PatientObject> RetrievePatients()
         {
-            string queryString =
+            string sqlString =
                 "SELECT * FROM [Patient] ORDER BY Patient_Username;";
 
             OleDbCommand command = new OleDbCommand();
             command.Connection = DataBaseConnection;
-            command.CommandText = queryString;
+            command.CommandText = sqlString;
 
             try
             {
@@ -142,12 +309,12 @@ namespace ABC_Hospital_Web_Service.Services
 
         public List<PatientObject> RetrievePatientsFiltered(string fieldName, string value)
         {
-            string queryString =
+            string sqlString =
                 "SELECT * FROM [Patient] WHERE " + fieldName + "=\"" + value + "\" ORDER BY Patient_Username;";
 
             OleDbCommand command = new OleDbCommand();
             command.Connection = DataBaseConnection;
-            command.CommandText = queryString;
+            command.CommandText = sqlString;
 
             try
             {
@@ -176,12 +343,12 @@ namespace ABC_Hospital_Web_Service.Services
 
         public List<DoctorObject> RetrieveDoctors()
         {
-            string queryString =
+            string sqlString =
                 "SELECT * FROM [Doctor] ORDER BY Doctor_Username;";
 
             OleDbCommand command = new OleDbCommand();
             command.Connection = DataBaseConnection;
-            command.CommandText = queryString;
+            command.CommandText = sqlString;
 
             try
             {
@@ -211,12 +378,12 @@ namespace ABC_Hospital_Web_Service.Services
 
         public List<DoctorObject> RetrieveDoctorsFiltered(string fieldName, string value)
         {
-            string queryString =
+            string sqlString =
                 "SELECT * FROM [Doctor] WHERE " + fieldName + "=\"" + value + "\" ORDER BY Doctor_Username;";
 
             OleDbCommand command = new OleDbCommand();
             command.Connection = DataBaseConnection;
-            command.CommandText = queryString;
+            command.CommandText = sqlString;
 
             try
             {
@@ -246,12 +413,12 @@ namespace ABC_Hospital_Web_Service.Services
 
         public List<PrescriptionObject> RetrievePrescriptions()
         {
-            string queryString =
+            string sqlString =
                 "SELECT * FROM [Prescription] ORDER BY Prescribed_Date;";
 
             OleDbCommand command = new OleDbCommand();
             command.Connection = DataBaseConnection;
-            command.CommandText = queryString;
+            command.CommandText = sqlString;
 
             try
             {
@@ -285,12 +452,12 @@ namespace ABC_Hospital_Web_Service.Services
 
         public List<PrescriptionObject> RetrievePrescriptionsFiltered(string fieldName, string value)
         {
-            string queryString =
+            string sqlString =
                 "SELECT * FROM [Prescription] WHERE " + fieldName + "=\"" + value + "\" ORDER BY Prescribed_Date;";
 
             OleDbCommand command = new OleDbCommand();
             command.Connection = DataBaseConnection;
-            command.CommandText = queryString;
+            command.CommandText = sqlString;
 
             try
             {
@@ -324,12 +491,12 @@ namespace ABC_Hospital_Web_Service.Services
 
         public List<DiagnosisObject> RetrieveDiagnoses()
         {
-            string queryString =
+            string sqlString =
                 "SELECT * FROM [Diagnosis] ORDER BY Diagnosis_Date;";
 
             OleDbCommand command = new OleDbCommand();
             command.Connection = DataBaseConnection;
-            command.CommandText = queryString;
+            command.CommandText = sqlString;
 
             try
             {
@@ -364,12 +531,12 @@ namespace ABC_Hospital_Web_Service.Services
 
         public List<DiagnosisObject> RetrieveDiagnosesFiltered(string fieldName, string value)
         {
-            string queryString =
+            string sqlString =
                 "SELECT * FROM [Diagnosis] WHERE " + fieldName + "=\"" + value + "\" ORDER BY Diagnosis_Date;";
 
             OleDbCommand command = new OleDbCommand();
             command.Connection = DataBaseConnection;
-            command.CommandText = queryString;
+            command.CommandText = sqlString;
 
             try
             {

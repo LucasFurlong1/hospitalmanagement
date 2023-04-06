@@ -12,7 +12,8 @@ export const Patient = () => {
 
 
     useEffect(() => {
-        fetch("https://localhost:44304/User/GetUsers").then(response => response.json()).then((response) => {
+        fetch("https://localhost:44304/api/User/GetUsers"
+          ).then(response => response.json()).then((response) => {
             console.log(response)
         })
     },[])

@@ -8,13 +8,11 @@ namespace ABC_Hospital_Web_Service.Services
     {
         private SQLInterface _sqlservice;
         private bool formatJson;
-        private readonly ILogger<UserController> _logger;
 
-        public DiagnosisService(ILogger<UserController> logger, bool format_json = true)
+        public DiagnosisService(bool format_json = true)
         {
             _sqlservice = new SQLInterface();
             formatJson = format_json;
-            _logger = logger;
         }
 
         public string GetDiagnoses()
