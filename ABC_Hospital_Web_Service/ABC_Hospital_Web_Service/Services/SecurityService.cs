@@ -18,7 +18,7 @@ namespace ABC_Hospital_Web_Service.Services
         {
             bool success = false;
             UserCredObject userCredsStored = GetUserCreds(username);
-            if (VerifyHashedPassword(userCredsStored, password) == PasswordVerificationResult.Success)
+            if (userCredsStored.Password != "" && VerifyHashedPassword(userCredsStored, password) == PasswordVerificationResult.Success)
             {
                 success = true;
                 _sqlservice.UpdateUserIdentitySession(username);

@@ -64,10 +64,14 @@ namespace ABC_Hospital_Web_Service.Services
                 using (OleDbDataReader reader = command.ExecuteReader())
                 {
                     UserCredObject user = new UserCredObject();
-                    while (reader.Read())
+                    user.Username = username;
+                    if (reader.Read())
                     {
-                        user.Username = username;
                         user.Password = reader.GetString(0);
+                    }
+                    else
+                    {
+                        user.Password = "";
                     }
                     reader.Close();
                     return user;
