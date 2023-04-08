@@ -34,6 +34,5 @@ namespace ABC_Hospital_Web_Service.Controllers
         {
             return _userService.GetUsersByAccountType(accountType);
         }
-        //CreateUser? May not need
     }
 }

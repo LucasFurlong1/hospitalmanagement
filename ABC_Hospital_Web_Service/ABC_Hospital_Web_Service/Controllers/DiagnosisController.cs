@@ -1,4 +1,5 @@
-﻿using ABC_Hospital_Web_Service.Services;
+﻿using ABC_Hospital_Web_Service.Models;
+using ABC_Hospital_Web_Service.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ABC_Hospital_Web_Service.Controllers
@@ -14,7 +15,6 @@ namespace ABC_Hospital_Web_Service.Controllers
             _diagnosisService = new DiagnosisService();
         }
 
-        // Diagnosis endpoints
         [HttpGet("GetDiagnoses")]
         public ActionResult<string> GetDiagnoses()
         {
@@ -30,8 +30,20 @@ namespace ABC_Hospital_Web_Service.Controllers
         {
             return _diagnosisService.GetDiagnosesByPatient(patientUsername);
         }
-        // [HttpPut("CreateDiagnosis")]
-        // [HttpPut("UpdateDiagnosis")]
-        // [HttpDelete("DeleteDiagnosis")]
+        [HttpPut("CreateDiagnosis")]
+        public ActionResult<string> CreateDiagnosis(DiagnosisObject diagnosis)
+        {
+            return _diagnosisService.CreateDiagnosis(diagnosis);
+        }
+        [HttpPut("UpdateDiagnosis")]
+        public void UpdateDiagnosis(DiagnosisObject diagnosis)
+        {
+            _diagnosisService.UpdateDiagnosis(diagnosis);
+        }
+        [HttpDelete("DeleteDiagnosis")]
+        public void DeleteDiagnosis(string diagnosis_ID)
+        {
+            _diagnosisService.DeleteDiagnosis(diagnosis_ID);
+        }
     }
 }

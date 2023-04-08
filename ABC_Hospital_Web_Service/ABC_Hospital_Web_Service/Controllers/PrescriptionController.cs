@@ -1,4 +1,5 @@
-﻿using ABC_Hospital_Web_Service.Services;
+﻿using ABC_Hospital_Web_Service.Models;
+using ABC_Hospital_Web_Service.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ABC_Hospital_Web_Service.Controllers
@@ -13,7 +14,6 @@ namespace ABC_Hospital_Web_Service.Controllers
         {
             _prescriptionService = new PrescriptionService();
         }
-
 
         [HttpGet("GetPrescriptions")]
         public ActionResult<string> GetPrescriptions()
@@ -30,8 +30,20 @@ namespace ABC_Hospital_Web_Service.Controllers
         {
             return _prescriptionService.GetPrescriptionsByPatient(patientUsername);
         }
-        // [HttpPut("CreatePrescription")]
-        // [HttpPut("UpdatePrescription")]
-        // [HttpDelete("DeletePrescription")]
+        [HttpPut("CreatePrescription")]
+        public ActionResult<string> CreatePrescription(PrescriptionObject prescription)
+        {
+            return _prescriptionService.CreatePrescription(prescription);
+        }
+        [HttpPut("UpdatePrescription")]
+        public void UpdatePrescription(PrescriptionObject prescription)
+        {
+            _prescriptionService.UpdatePrescription(prescription);
+        }
+        [HttpDelete("DeletePrescription")]
+        public void DeletePrescription(string prescription_ID)
+        {
+            _prescriptionService.DeletePrescription(prescription_ID);
+        }
     }
 }

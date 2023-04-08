@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace ABC_Hospital_Web_Service.Services
 {
     /* To Do:
-     * Add function to add new user
+     * Need to get username generation working to accept last names like Van Dyke or Smith-Jones
      */
     public class UserService
     {
@@ -54,15 +54,21 @@ namespace ABC_Hospital_Web_Service.Services
 
         public string GetUserByUsername(string userName)
         {
+            string userJson = "{}";
+
             // Prepare filter field and value
             string fieldName = "Username";
             string filterValue = userName.ToLower();
 
             // Get Users from SQL Service
-            UserObject user = _sqlservice.RetrieveUsersFiltered(fieldName, filterValue)[0];
+            List<UserObject> user = _sqlservice.RetrieveUsersFiltered(fieldName, filterValue);
 
-            // Convert Users to JSON
-            string userJson = JsonSerializer.Serialize<UserObject>(user, new JsonSerializerOptions() { WriteIndented = formatJson });
+            // If User was found, then
+            if (user.Count > 0)
+            {
+                // Convert Users to JSON
+                userJson = JsonSerializer.Serialize<UserObject>(user[0], new JsonSerializerOptions() { WriteIndented = formatJson });
+            }
 
             return userJson;
         }
@@ -74,15 +80,18 @@ namespace ABC_Hospital_Web_Service.Services
 
         public string GenerateUsername(string userFullName)
         {
-            // TO DO: Need to get this working to accept last names like Van Dyke or Smith-Jones
-            //_userService.GenerateUsername("Jennifer Alice Doe");
             string username = "";
 
             // Verify that the name is in a valid format
             if (Regex.IsMatch(userFullName, @"(\w+\s(\w+\.?\s)*\w\w+)"))
             {
+                // Split User's full name
                 string[] temp = userFullName.Split(" ");
+
+                // Get first character of User's first name
                 username = temp.First()[0].ToString();
+
+                // Get up to 7 characters from last name
                 if (temp.Last().Length > 7)
                 {
                     username += temp.Last().Substring(0, 7);
@@ -92,6 +101,8 @@ namespace ABC_Hospital_Web_Service.Services
                     username += temp.Last();
                 }
                 username = username.ToLower();
+
+                // Find out what digit is needed to make Username unique
                 username = _sqlservice.CreateNewUsername(username);
             }
 

@@ -1,6 +1,4 @@
-﻿using ABC_Hospital_Web_Service.Controllers;
-using ABC_Hospital_Web_Service.Models;
-using System.Numerics;
+﻿using ABC_Hospital_Web_Service.Models;
 using System.Text.Json;
 
 namespace ABC_Hospital_Web_Service.Services
@@ -22,30 +20,27 @@ namespace ABC_Hospital_Web_Service.Services
 
         public string GetDoctorInfo(string userName)
         {
+            string doctorJson = "{}";
+
             // Prepare filter field and value
             string fieldName = "Doctor_Username";
             string filterValue = userName.ToLower();
 
             // Get Doctor from SQL Service
-            DoctorObject doctor = _sqlservice.RetrieveDoctorsFiltered(fieldName, filterValue)[0];
+            List<DoctorObject> doctor = _sqlservice.RetrieveDoctorsFiltered(fieldName, filterValue);
 
-            // Get Doctor's user data from SQL Service
-            UserObject temp = _sqlservice.RetrieveUsersFiltered("Username", filterValue)[0];
+            // If Doctor was found, then
+            if (doctor.Count > 0)
+            {
+                // Get Doctor's user data from SQL Service
+                UserObject temp = _sqlservice.RetrieveUsersFiltered("Username", filterValue)[0];
 
-            // Merge Data
-            doctor.Account_Type = temp.Account_Type;
-            doctor.Name = temp.Name;
-            doctor.Birth_Date = temp.Birth_Date;
-            doctor.Gender = temp.Gender;
-            doctor.Address = temp.Address;
-            doctor.Phone_Number = temp.Phone_Number;
-            doctor.Email_Address = temp.Email_Address;
-            doctor.Emergency_Contact_Name = temp.Emergency_Contact_Name;
-            doctor.Emergency_Contact_Number = temp.Emergency_Contact_Number;
-            doctor.Date_Created = temp.Date_Created;
+                // Merge Data
+                doctor[0] = doctor[0] + temp;
 
-            // Convert Doctor to JSON
-            string doctorJson = JsonSerializer.Serialize<DoctorObject>(doctor, new JsonSerializerOptions() { WriteIndented = formatJson });
+                // Convert Doctor to JSON
+                doctorJson = JsonSerializer.Serialize<DoctorObject>(doctor[0], new JsonSerializerOptions() { WriteIndented = formatJson });
+            }
 
             return doctorJson;
         }
@@ -55,22 +50,14 @@ namespace ABC_Hospital_Web_Service.Services
             // Get Doctors from SQL Service
             List<DoctorObject> doctors = _sqlservice.RetrieveDoctors();
 
-            // Get Doctors' user data from SQL Service
-            foreach (DoctorObject doctor in doctors)
+            // For each Doctor,
+            for(int i = 0; i < doctors.Count; i++)
             {
-                UserObject temp = _sqlservice.RetrieveUsersFiltered("Username", doctor.Username)[0];
+                // Get Doctor's user data from SQL Service
+                UserObject temp = _sqlservice.RetrieveUsersFiltered("Username", doctors[i].Username)[0];
 
                 // Merge Data
-                doctor.Account_Type = temp.Account_Type;
-                doctor.Name = temp.Name;
-                doctor.Birth_Date = temp.Birth_Date;
-                doctor.Gender = temp.Gender;
-                doctor.Address = temp.Address;
-                doctor.Phone_Number = temp.Phone_Number;
-                doctor.Email_Address = temp.Email_Address;
-                doctor.Emergency_Contact_Name = temp.Emergency_Contact_Name;
-                doctor.Emergency_Contact_Number = temp.Emergency_Contact_Number;
-                doctor.Date_Created = temp.Date_Created;
+                doctors[i] = doctors[i] + temp;
             }
 
             // Convert Doctors to JSON
@@ -81,6 +68,7 @@ namespace ABC_Hospital_Web_Service.Services
 
         public string CreateDoctor(NewDoctorObject doctor)
         {
+            // Generate Username for Doctor
             doctor.Username = _userService.GenerateUsername(doctor.Name);
 
             // Create User record
@@ -92,6 +80,7 @@ namespace ABC_Hospital_Web_Service.Services
             // Create Doctor record
             _sqlservice.CreateDoctor(doctor);
 
+            // Return Username so UI has access to it
             return doctor.Username;
         }
     }

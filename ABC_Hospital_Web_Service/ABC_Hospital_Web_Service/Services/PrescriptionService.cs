@@ -1,5 +1,4 @@
-﻿using ABC_Hospital_Web_Service.Controllers;
-using ABC_Hospital_Web_Service.Models;
+﻿using ABC_Hospital_Web_Service.Models;
 using System.Text.Json;
 
 namespace ABC_Hospital_Web_Service.Services
@@ -28,15 +27,21 @@ namespace ABC_Hospital_Web_Service.Services
 
         public string GetPrescriptionByID(string id)
         {
+            string prescriptionJson = "{}";
+
             // Prepare filter field and value
             string fieldName = "Prescription_ID";
             string filterValue = id;
 
             // Get Prescription from SQL Service
-            PrescriptionObject prescription = _sqlservice.RetrievePrescriptionsFiltered(fieldName, filterValue)[0];
+            List<PrescriptionObject> prescription = _sqlservice.RetrievePrescriptionsFiltered(fieldName, filterValue);
 
-            // Convert Prescription to JSON
-            string prescriptionJson = JsonSerializer.Serialize<PrescriptionObject>(prescription, new JsonSerializerOptions() { WriteIndented = formatJson });
+            // If the Prescsription was found, then
+            if (prescription.Count > 0)
+            {
+                // Convert Prescription to JSON
+                prescriptionJson = JsonSerializer.Serialize<PrescriptionObject>(prescription[0], new JsonSerializerOptions() { WriteIndented = formatJson });
+            }
 
             return prescriptionJson;
         }
@@ -54,6 +59,28 @@ namespace ABC_Hospital_Web_Service.Services
             string prescriptionJson = JsonSerializer.Serialize<List<PrescriptionObject>>(prescriptions, new JsonSerializerOptions() { WriteIndented = formatJson });
 
             return prescriptionJson;
+        }
+
+        public string CreatePrescription(PrescriptionObject prescription)
+        {
+            // Generate ID for Prescription
+            prescription.Prescription_ID = Guid.NewGuid().ToString();
+
+            // Create new Prescription
+            _sqlservice.CreatePrescription(prescription);
+
+            // Return Prescription's ID so UI has access to it
+            return prescription.Prescription_ID;
+        }
+
+        public void UpdatePrescription(PrescriptionObject prescription)
+        {
+            _sqlservice.UpdatePrescription(prescription);
+        }
+
+        public void DeletePrescription(string prescription_ID)
+        {
+            _sqlservice.DeletePrescription(prescription_ID);
         }
     }
 }

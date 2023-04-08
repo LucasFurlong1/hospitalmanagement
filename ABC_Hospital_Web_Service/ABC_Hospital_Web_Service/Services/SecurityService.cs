@@ -1,27 +1,29 @@
-﻿using ABC_Hospital_Web_Service.Controllers;
-using ABC_Hospital_Web_Service.Models;
+﻿using ABC_Hospital_Web_Service.Models;
 using Microsoft.AspNetCore.Identity;
-using System.Xml.Linq;
+using System.Text.Json;
 
 namespace ABC_Hospital_Web_Service.Services
 {
     public class SecurityService
     {
         private SQLInterface _sqlservice;
+        private bool formatJson;
 
         public SecurityService(bool format_json = true)
         {
             _sqlservice = new SQLInterface();
+            formatJson = format_json;
         }
 
         public bool CheckUserCredentials(string username, string password)
         {
             bool success = false;
-            UserCredObject userCredsStored = GetUserCreds(username);
+            UserCredObject userCredsStored = _sqlservice.RetrieveUserCred(username);
             if (userCredsStored.Password != "" && VerifyHashedPassword(userCredsStored, password) == PasswordVerificationResult.Success)
             {
                 success = true;
-                _sqlservice.UpdateUserIdentitySession(username);
+                UserSessionObject session = new UserSessionObject(username, DateTime.Now, DateTime.Now.AddMinutes(30));
+                _sqlservice.UpdateUserIdentitySession(session);
             }
             return success;
         }
@@ -32,18 +34,27 @@ namespace ABC_Hospital_Web_Service.Services
             userCred = HashPassword(userCred);
             if (VerifyHashedPassword(userCred, password) == PasswordVerificationResult.Success)
             {
-                PutUserCreds(userCred);
+                _sqlservice.StoreUserCred(userCred);
             }
         }
 
-        private UserCredObject GetUserCreds(string username)
+        public string GetSessionExpirationTime(string username)
         {
-            return _sqlservice.RetrieveUserCred(username);
+            string sessionJson = "{}";
+
+            UserSessionObject session = _sqlservice.RetrieveUserIdentitySession(username);
+
+            if (session.Username != null)
+            {
+                sessionJson = JsonSerializer.Serialize<UserSessionObject>(session, new JsonSerializerOptions() { WriteIndented = formatJson });
+            }
+
+            return sessionJson;
         }
 
-        private void PutUserCreds(UserCredObject user)
+        public void UpdateSessionData(UserSessionObject session)
         {
-            _sqlservice.StoreUserCred(user);
+            _sqlservice.UpdateUserIdentitySession(session);
         }
 
         private UserCredObject HashPassword(UserCredObject userUnHashed)
