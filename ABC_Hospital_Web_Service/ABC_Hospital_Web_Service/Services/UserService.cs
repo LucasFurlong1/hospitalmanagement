@@ -20,6 +20,11 @@ namespace ABC_Hospital_Web_Service.Services
             formatJson = format_json;
             _logger = logger;
         }
+        public UserService(bool format_json = true)
+        {
+            _sqlservice = new SQLInterface();
+            formatJson = format_json;
+        }
 
         public string GetUsers()
         {
@@ -62,13 +67,19 @@ namespace ABC_Hospital_Web_Service.Services
             return userJson;
         }
 
+        public void CreateUser(UserObject user)
+        {
+            _sqlservice.CreateUser(user);
+        }
+
         public string GenerateUsername(string userFullName)
         {
+            // TO DO: Need to get this working to accept last names like Van Dyke or Smith-Jones
             //_userService.GenerateUsername("Jennifer Alice Doe");
             string username = "";
 
             // Verify that the name is in a valid format
-            if (Regex.IsMatch(userFullName, @"(\w+\s(\w+\s)*\w\w+)"))
+            if (Regex.IsMatch(userFullName, @"(\w+\s(\w+\.?\s)*\w\w+)"))
             {
                 string[] temp = userFullName.Split(" ");
                 username = temp.First()[0].ToString();
@@ -81,10 +92,7 @@ namespace ABC_Hospital_Web_Service.Services
                     username += temp.Last();
                 }
                 username = username.ToLower();
-                // Need to make call to database to check for conflicts
-                // If none are found, at 1, otherwise add one to the first username returned
-                //SELECT Username FROM[User] WHERE Username LIKE 'jdoe*' ORDER BY Username DESC;
-
+                username = _sqlservice.CreateNewUsername(username);
             }
 
             return username;

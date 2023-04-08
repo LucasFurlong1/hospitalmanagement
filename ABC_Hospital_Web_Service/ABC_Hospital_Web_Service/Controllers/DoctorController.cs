@@ -1,4 +1,5 @@
-﻿using ABC_Hospital_Web_Service.Services;
+﻿using ABC_Hospital_Web_Service.Models;
+using ABC_Hospital_Web_Service.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ABC_Hospital_Web_Service.Controllers
@@ -24,6 +25,10 @@ namespace ABC_Hospital_Web_Service.Controllers
         {
             return _doctorService.GetAcceptingDoctors();
         }
-        // [HttpPost("CreateDoctor")]
+        [HttpPut("CreateDoctor")]
+        public ActionResult<string> CreatePatient([FromBody] NewDoctorObject doctor)
+        {
+            return _doctorService.CreateDoctor(doctor); ;
+        }
     }
 }

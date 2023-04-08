@@ -2,6 +2,11 @@
 
 namespace ABC_Hospital_Web_Service.Models
 {
+    public class NewPatientObject:PatientObject
+    {
+        [JsonInclude]
+        public string? Password { get; set; }
+    }
     public class PatientObject:UserObject
     {
         [JsonInclude]

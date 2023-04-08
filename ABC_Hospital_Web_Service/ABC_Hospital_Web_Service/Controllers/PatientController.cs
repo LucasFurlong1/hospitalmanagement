@@ -9,11 +9,9 @@ namespace ABC_Hospital_Web_Service.Controllers
     public class PatientController : ControllerBase
     {
         private PatientService _patientService;
-        //private readonly ILogger<PatientController> _logger;
-        public PatientController()//(ILogger<PatientController> logger)
+        public PatientController()
         {
-            _patientService = new PatientService();// (logger);
-            //_logger = logger;
+            _patientService = new PatientService();
         }
 
         [HttpGet("GetPatientInfo")]
@@ -27,10 +25,9 @@ namespace ABC_Hospital_Web_Service.Controllers
             return _patientService.GetPatientsByDoctor(doctorUsername);
         }
         [HttpPut("CreatePatient")]
-        public ActionResult<bool> CreatePatient([FromBody] UserCredObject patientCreds)//, [FromBodyAttribute] PatientObject patient)
+        public ActionResult<string> CreatePatient([FromBody] NewPatientObject patient)
         {
-
-            return false;
+            return _patientService.CreatePatient(patient);
         }
     }
 }

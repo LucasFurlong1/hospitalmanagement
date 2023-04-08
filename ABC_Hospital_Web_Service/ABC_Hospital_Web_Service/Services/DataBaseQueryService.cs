@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
 using Microsoft.Extensions.Configuration;
+using System.Text.RegularExpressions;
 
 namespace ABC_Hospital_Web_Service.Services
 {
@@ -148,6 +149,7 @@ namespace ABC_Hospital_Web_Service.Services
                 sqlString =
                     "INSERT INTO [Identity_Session] VALUES ('" + username + "', '"
                     + DateTime.Now + "', '" + DateTime.Now.AddMinutes(30) + "');";
+
                 command = new OleDbCommand(); //Username = '" + username + "', 
 
                 command.Connection = DataBaseConnection;
@@ -172,7 +174,8 @@ namespace ABC_Hospital_Web_Service.Services
                 sqlString =
                     "Update [Identity_Session] SET Session_Start = '" + DateTime.Now + "', Session_Expire = '" + DateTime.Now.AddMinutes(30)
                     + "' WHERE Username = '" + username + "';";
-                command = new OleDbCommand(); //Username = '" + username + "', 
+
+                command = new OleDbCommand(); 
 
                 command.Connection = DataBaseConnection;
                 command.CommandText = sqlString;
@@ -189,6 +192,61 @@ namespace ABC_Hospital_Web_Service.Services
                 }
             }
             return;
+        }
+
+
+        public string CreateNewUsername(string partialUsername)
+        {
+            string sqlString =
+                "SELECT Username FROM [User] WHERE Username LIKE '" + partialUsername + "%' ORDER BY Username DESC;";
+
+            OleDbCommand command = new OleDbCommand();
+            command.Connection = DataBaseConnection;
+            command.CommandText = sqlString;
+            try
+            {
+                using (OleDbDataReader reader = command.ExecuteReader())
+                {
+                    string digit = "1";
+                    if (reader.Read())
+                    {
+                        string temp = reader.GetString(0);
+                        temp = Regex.Replace(temp, "[^.0-9]", "");
+                        digit = (int.Parse(temp) + 1).ToString();
+                    }
+                    reader.Close();
+                    return partialUsername + digit;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                //return ex.Message;
+            }
+            return "";
+        }
+
+        public void CreateUser(UserObject user)
+        {
+            string sqlString = "INSERT INTO [User] VALUES ('" + user.Username + "', '" + user.Account_Type + "', '" + "" + "', '" +
+                user.Name + "', '" + user.Birth_Date + "', '" + user.Gender + "', '" +
+                user.Address + "', '" + user.Phone_Number + "', '" + user.Email_Address + "', '" + user.Emergency_Contact_Name +
+                "', '" + user.Emergency_Contact_Number + "', '" + user.Date_Created + "');";
+
+            OleDbCommand command = new OleDbCommand();
+
+            command.Connection = DataBaseConnection;
+            command.CommandText = sqlString;
+
+            try
+            {
+                command.ExecuteNonQuery();
+                { }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         public List<UserObject> RetrieveUsers()
@@ -277,6 +335,28 @@ namespace ABC_Hospital_Web_Service.Services
             return null;
         }
 
+
+        public void CreatePatient(PatientObject patient)
+        {
+            string sqlString = "INSERT INTO [Patient] VALUES ('" + patient.Username + "', '" +
+                patient.Doctor_Username + "', '" + patient.Last_Interacted + "');";
+
+            OleDbCommand command = new OleDbCommand();
+
+            command.Connection = DataBaseConnection;
+            command.CommandText = sqlString;
+
+            try
+            {
+                command.ExecuteNonQuery();
+                { }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
         public List<PatientObject> RetrievePatients()
         {
             string sqlString =
@@ -343,6 +423,28 @@ namespace ABC_Hospital_Web_Service.Services
                 //return ex.Message;
             }
             return null;
+        }
+
+
+        public void CreateDoctor(DoctorObject doctor)
+        {
+            string sqlString = "INSERT INTO [Doctor] VALUES ('" + doctor.Username + "', '" +
+                doctor.Doctor_Department + "', " + doctor.Is_On_Staff + ", '" + doctor.Doctorate_Degree + "');";
+
+            OleDbCommand command = new OleDbCommand();
+
+            command.Connection = DataBaseConnection;
+            command.CommandText = sqlString;
+
+            try
+            {
+                command.ExecuteNonQuery();
+                { }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         public List<DoctorObject> RetrieveDoctors()

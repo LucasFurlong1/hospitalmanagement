@@ -1,4 +1,5 @@
-﻿using ABC_Hospital_Web_Service.Services;
+﻿using ABC_Hospital_Web_Service.Models;
+using ABC_Hospital_Web_Service.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ABC_Hospital_Web_Service.Controllers
@@ -16,9 +17,14 @@ namespace ABC_Hospital_Web_Service.Controllers
 
         // Security Endpoints
         [HttpPost("LoginRequest")]
-        public ActionResult<bool> LoginRequest([FromBody] Models.UserCredObject requestObj)
+        public ActionResult<bool> LoginRequest([FromBody] UserCredObject requestObj)
         {
             return _securityService.CheckUserCredentials(requestObj.Username, requestObj.Password);
+        }
+        [HttpPost("UpdateCredentials")]
+        public void UpdateCredentials([FromBody] UserCredObject requestObj)
+        {
+            _securityService.SaveNewCredentials(requestObj.Username, requestObj.Password);
         }
         //[HttpGet("CheckUserSession")]
 

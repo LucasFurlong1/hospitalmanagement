@@ -7,11 +7,15 @@ namespace ABC_Hospital_Web_Service.Services
 {
     public class DoctorService
     {
+        private SecurityService _securityService;
+        private UserService _userService;
         private SQLInterface _sqlservice;
         private bool formatJson;
 
         public DoctorService(bool format_json = true)
         {
+            _securityService = new SecurityService();
+            _userService = new UserService();
             _sqlservice = new SQLInterface();
             formatJson = format_json;
         }
@@ -73,6 +77,22 @@ namespace ABC_Hospital_Web_Service.Services
             string doctorJson = JsonSerializer.Serialize<List<DoctorObject>>(doctors, new JsonSerializerOptions() { WriteIndented = formatJson });
 
             return doctorJson;
+        }
+
+        public string CreateDoctor(NewDoctorObject doctor)
+        {
+            doctor.Username = _userService.GenerateUsername(doctor.Name);
+
+            // Create User record
+            _userService.CreateUser(doctor);
+
+            // Store User Credentials
+            _securityService.SaveNewCredentials(doctor.Username, doctor.Password);
+
+            // Create Doctor record
+            _sqlservice.CreateDoctor(doctor);
+
+            return doctor.Username;
         }
     }
 }
