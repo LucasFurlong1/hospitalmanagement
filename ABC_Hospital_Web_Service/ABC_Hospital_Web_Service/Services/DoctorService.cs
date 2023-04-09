@@ -68,6 +68,10 @@ namespace ABC_Hospital_Web_Service.Services
 
         public string CreateDoctor(NewDoctorObject doctor)
         {
+            // Format DateTimes
+            doctor.Date_Created = DateTime.Parse(doctor.Date_Created).ToShortDateString();
+            doctor.Birth_Date = DateTime.Parse(doctor.Birth_Date).ToShortDateString();
+
             // Generate Username for Doctor
             doctor.Username = _userService.GenerateUsername(doctor.Name);
 

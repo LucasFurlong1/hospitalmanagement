@@ -71,6 +71,10 @@ namespace ABC_Hospital_Web_Service.Services
 
         public string CreatePatient(NewPatientObject patient)
         {
+            // Format DateTimes
+            patient.Date_Created = DateTime.Parse(patient.Date_Created).ToShortDateString();
+            patient.Birth_Date = DateTime.Parse(patient.Birth_Date).ToShortDateString();
+
             // Generate Username for Patient
             patient.Username = _userService.GenerateUsername(patient.Name);
 
