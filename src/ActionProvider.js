@@ -1,9 +1,9 @@
-import axios from "axios";
-
 var usertoken = ""
 var convotoken = ""
 var prevMessage = []
 var loggedIn = false
+var apiKey = ""
+var authToken = ""
 
 class ActionProvider {
   constructor(
@@ -53,7 +53,13 @@ class ActionProvider {
     this.setChatbotMessage(message)
   }
 
-  loginHandler = (props) => {
+  loginHandler = async (props) => {
+
+    await fetch(`https://localhost:44304/api/Security/GetChatBotData`).then(response => response.json()).then((response) => {
+      apiKey = response[0].Key
+      authToken = response[0].Token
+    })
+
     prevMessage = []
     this.state = {loginID: Math.random()}
     const options = {
@@ -61,8 +67,8 @@ class ActionProvider {
       headers: {
         accept: '*/*',
         'content-type': 'application/json',
-        Authorization: 'token QTXDVGCtl1wehAZMgtr37hd8g9PkGKjb.dJlfIWZiyV8cNCW0hvJbOH7ujTzB1r6B',
-        'x-api-key': 'gWdQEFh7265IsEBsHWtYP3dwUBtHZ9017ngbQm4m'
+        Authorization: `token ${authToken}`,
+        'x-api-key': apiKey
       },
       body: JSON.stringify({id: this.state.loginID.toString(), name: props, email: 'string', email_verified: true})
     };
@@ -74,7 +80,6 @@ class ActionProvider {
       .then(response => response.json())
       .then((response) => {
         usertoken = response.access_token
-        console.log(usertoken)
       })
       .catch(err => console.error(err));
 
@@ -92,15 +97,14 @@ class ActionProvider {
         accept: '*/*',
         'content-type': 'application/json',
         Authorization: usertoken,
-        'x-api-key': 'gWdQEFh7265IsEBsHWtYP3dwUBtHZ9017ngbQm4m'
+        'x-api-key': apiKey
       },
       body: JSON.stringify({conversation_id: 'a', message: props})
     };
-    
+
     fetch('https://portal.your.md/v3/chat', options)
       .then(response => response.json())
       .then((response) => {
-        console.log(response)
         let message = this.createChatBotMessage(response.messages[1].value)
         this.setChatbotMessage(message)
         response.question.choices.forEach(element => {
@@ -121,7 +125,7 @@ class ActionProvider {
         accept: '*/*',
         'content-type': 'application/json',
         Authorization: usertoken,
-        'x-api-key': 'gWdQEFh7265IsEBsHWtYP3dwUBtHZ9017ngbQm4m'
+        'x-api-key': apiKey
       },
       body: JSON.stringify({conversation_id: convotoken, message: props})
     };
@@ -152,7 +156,6 @@ class ActionProvider {
         authorization: 'Bearer ' + usertoken
       }
     };
-    console.log(options.headers.authorization)
 
     fetch('https://portal.your.md/v4/logout', options)
       .catch(err => console.error(err));

@@ -1,12 +1,13 @@
 import SideNav, { Toggle, NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '@trendmicro/react-sidenav/dist/react-sidenav.css';
+let prop = ""
 
-
-const SideNavBarPat = () => {
+const SideNavBarPat = (props) => {
     const navigate = useNavigate()
+    prop = props.props
     return (
-        <SideNav className="side_nav" onSelect={(selected) => {navigate(`/${selected}`, {state: {}})}}>
+        <SideNav className="side_nav" onSelect={(selected) => {navigate(`/${selected}`, {state: {prop}})}}>
             <SideNav.Toggle />
             <SideNav.Nav defaultSelected="home">
                 <NavItem eventKey="patient-info">

@@ -17,11 +17,9 @@ export const PatientInfo = () => {
             setDiagnoses(response)
         })
         fetch(`https://localhost:44304/api/Patient/GetPatientInfo?patientUsername=${location.state.prop}`).then(response => response.json()).then((response) => {
-            setPatientName(response.Name)
+            setPatientName(response[0].Name)
         })
     }, [])
-
-    console.log(prescription)
 
     return (
         <div className='patient-info-page-container'>

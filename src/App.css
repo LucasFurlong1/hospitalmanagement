@@ -80,3 +80,13 @@ button:active {
   color: #38302E;
 }
 
+.logout-button {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  outline: none;
+  border: none;
+  font-size: medium;
+}

@@ -78,7 +78,7 @@ export const Doctor = () => {
                     )
                 })}
             </div>
-            <SideNavBar />
+            <SideNavBar props={location.state.username}/>
         </div>
     );
 }

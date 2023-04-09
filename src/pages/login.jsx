@@ -20,10 +20,10 @@ export const Login = (props) => {
         }).then(response => response.json()).then((response) => {
             if (response === true) {
                 fetch(`https://localhost:44304/api/User/GetUser?username=${username}`).then(res => res.json()).then((res) => {
-                    if(res.Account_Type === "D"){
+                    if(res[0].Account_Type === "D"){
                         navigate("/doctor", {state: {username}})
                     }
-                    else if(res.Account_Type === "P"){
+                    else if(res[0].Account_Type === "P"){
                         navigate("/patient", {state: {username}})
                     }
                 })

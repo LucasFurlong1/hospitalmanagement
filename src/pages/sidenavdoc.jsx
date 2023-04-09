@@ -2,11 +2,13 @@ import SideNav, { Toggle, NavItem, NavIcon, NavText } from '@trendmicro/react-si
 import { useNavigate } from 'react-router-dom';
 import '@trendmicro/react-sidenav/dist/react-sidenav.css';
 
+let username = ""
+const SideNavBarDoc = (props) => {
 
-const SideNavBarDoc = () => {
     const navigate = useNavigate()
+    username = props.props
     return (
-        <SideNav className="side_nav" onSelect={(selected) => {navigate('/'+selected)}}>
+        <SideNav className="side_nav" onSelect={(selected) => {navigate(`/${selected}`, {state: {username}})}}>
             <SideNav.Toggle />
             <SideNav.Nav defaultSelected="home">
                 <NavItem eventKey="docpres">

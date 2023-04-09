@@ -14,6 +14,7 @@
   .doctor-data-container {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     align-content: center;
     justify-content: center;
@@ -28,6 +29,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
   }
 
   .pat-block-1, .pat-block-2, .pat-block-top-1, .pat-block-top-2, .pat-block-middle-top-1, .pat-block-middle-top-2 {

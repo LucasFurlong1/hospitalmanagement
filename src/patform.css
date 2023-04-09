@@ -5,13 +5,39 @@
 
 .doctor-info-main-container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     margin-bottom: 1rem;
-    border: 2px solid white;
+    border: 3px solid white;
+    border-radius: 1rem;
+}
+
+.doc-info-1,.doc-info-2, .doc-info-bottom-1, .doc-info-bottom-2 {
+    display: flex;
+
+}
+
+.doc-info-1 {
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    border-bottom: 3px solid white;
+    width: 100%;
+}
+
+.doc-info-2 {
+    flex-direction: column;
     padding-left: 1rem;
     padding-right: 1rem;
+}
+
+.doc-info-bottom-1 {
+    align-items: center;
+}
+
+.doc-info-bottom-2 {
+    align-items: center;
 }
 
 .pat-container {
@@ -21,12 +47,7 @@
     align-items: center;
 }
 
-.pat-p {
-    margin-right: 0.5rem;
-    margin-left: 0.5rem;
-}
-
-.pat-lbl {
+.doc-info-title {
     font-weight: bold;
-    font-size: large;
+    padding-right: 0.5rem;
 }
