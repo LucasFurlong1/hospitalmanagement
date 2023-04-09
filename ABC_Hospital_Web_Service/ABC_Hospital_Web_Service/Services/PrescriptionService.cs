@@ -58,7 +58,7 @@ namespace ABC_Hospital_Web_Service.Services
         public string CreatePrescription(PrescriptionObject prescription)
         {
             // Format DateTimes
-            prescription.Prescribed_Date = DateTime.Parse(prescription.Prescribed_Date).ToShortDateString();
+            prescription.Prescribed_Date = DateTime.Parse(prescription.Prescribed_Date).ToString("yyyy-MM-dd");
 
             // Generate ID for Prescription
             prescription.Prescription_ID = Guid.NewGuid().ToString();
@@ -77,7 +77,7 @@ namespace ABC_Hospital_Web_Service.Services
         public bool UpdatePrescription(PrescriptionObject prescription)
         {
             // Format DateTimes
-            prescription.Prescribed_Date = DateTime.Parse(prescription.Prescribed_Date).ToShortDateString();
+            prescription.Prescribed_Date = DateTime.Parse(prescription.Prescribed_Date).ToString("yyyy-MM-dd");
 
             return _sqlservice.UpdatePrescription(prescription);
         }

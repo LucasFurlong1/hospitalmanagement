@@ -247,14 +247,14 @@ namespace ABC_Hospital_Web_Service.Services
                         temp.Username = reader.GetString(0);
                         temp.Account_Type = reader.GetString(1)[0];
                         temp.Name = reader.GetString(3);
-                        temp.Birth_Date = reader.GetDateTime(4).ToShortDateString();
+                        temp.Birth_Date = reader.GetDateTime(4).ToString("yyyy-MM-dd");
                         temp.Gender = reader.GetString(5)[0];
                         temp.Address = reader.GetString(6);
                         temp.Phone_Number = reader.GetString(7);
                         temp.Email_Address = reader.GetString(8);
                         temp.Emergency_Contact_Name = reader.GetString(9);
                         temp.Emergency_Contact_Number = reader.GetString(10);
-                        temp.Date_Created = reader.GetDateTime(11).ToShortDateString();
+                        temp.Date_Created = reader.GetDateTime(11).ToString("yyyy-MM-dd");
                         users.Add(temp);
                     }
                     reader.Close();
@@ -289,14 +289,14 @@ namespace ABC_Hospital_Web_Service.Services
                         temp.Username = reader.GetString(0);
                         temp.Account_Type = reader.GetString(1)[0];
                         temp.Name = reader.GetString(3);
-                        temp.Birth_Date = reader.GetDateTime(4).ToShortDateString();
+                        temp.Birth_Date = reader.GetDateTime(4).ToString("yyyy-MM-dd");
                         temp.Gender = reader.GetString(5)[0];
                         temp.Address = reader.GetString(6);
                         temp.Phone_Number = reader.GetString(7);
                         temp.Email_Address = reader.GetString(8);
                         temp.Emergency_Contact_Name = reader.GetString(9);
                         temp.Emergency_Contact_Number = reader.GetString(10);
-                        temp.Date_Created = reader.GetDateTime(11).ToShortDateString();
+                        temp.Date_Created = reader.GetDateTime(11).ToString("yyyy-MM-dd");
                         users.Add(temp);
                     }
                     reader.Close();
@@ -347,7 +347,7 @@ namespace ABC_Hospital_Web_Service.Services
                         PatientObject temp = new PatientObject();
                         temp.Username = reader.GetString(0);
                         temp.Doctor_Username = reader.GetString(1);
-                        temp.Last_Interacted = reader.GetDateTime(2).ToShortDateString();
+                        temp.Last_Interacted = reader.GetDateTime(2).ToString("yyyy-MM-dd");
                         patients.Add(temp);
                     }
                     reader.Close();
@@ -380,7 +380,7 @@ namespace ABC_Hospital_Web_Service.Services
                         PatientObject temp = new PatientObject();
                         temp.Username = reader.GetString(0);
                         temp.Doctor_Username = reader.GetString(1);
-                        temp.Last_Interacted = reader.GetDateTime(2).ToShortDateString();
+                        temp.Last_Interacted = reader.GetDateTime(2).ToString("yyyy-MM-dd");
                         patients.Add(temp);
                     }
                     reader.Close();
@@ -566,7 +566,7 @@ namespace ABC_Hospital_Web_Service.Services
                         temp.Patient_Username = reader.GetString(1);
                         temp.Doctor_Username = reader.GetString(2);
                         temp.Medication_Name = reader.GetString(3);
-                        temp.Prescribed_Date = reader.GetDateTime(4).ToShortDateString();
+                        temp.Prescribed_Date = reader.GetDateTime(4).ToString("yyyy-MM-dd");
                         temp.Dosage = reader.GetString(5);
                         temp.Instructions = reader.GetString(6);
                         temp.Is_Filled = reader.GetBoolean(7);
@@ -604,7 +604,7 @@ namespace ABC_Hospital_Web_Service.Services
                         temp.Patient_Username = reader.GetString(1);
                         temp.Doctor_Username = reader.GetString(2);
                         temp.Medication_Name = reader.GetString(3);
-                        temp.Prescribed_Date = reader.GetDateTime(4).ToShortDateString();
+                        temp.Prescribed_Date = reader.GetDateTime(4).ToString("yyyy-MM-dd");
                         temp.Dosage = reader.GetString(5);
                         temp.Instructions = reader.GetString(6);
                         temp.Is_Filled = reader.GetBoolean(7);
@@ -704,7 +704,7 @@ namespace ABC_Hospital_Web_Service.Services
                         temp.Patient_Username = reader.GetString(1);
                         temp.Doctor_Username = reader.GetString(2);
                         temp.Diagnosis_Name = reader.GetString(3);
-                        temp.Diagnosis_Date = reader.GetDateTime(4).ToShortDateString();
+                        temp.Diagnosis_Date = reader.GetDateTime(4).ToString("yyyy-MM-dd");
                         temp.Diagnosis_Description = reader.GetString(5);
                         temp.Diagnosis_Treatment = reader.GetString(6);
                         temp.Was_Admitted = reader.GetBoolean(7);
@@ -743,7 +743,7 @@ namespace ABC_Hospital_Web_Service.Services
                         temp.Patient_Username = reader.GetString(1);
                         temp.Doctor_Username = reader.GetString(2);
                         temp.Diagnosis_Name = reader.GetString(3);
-                        temp.Diagnosis_Date = reader.GetDateTime(4).ToShortDateString();
+                        temp.Diagnosis_Date = reader.GetDateTime(4).ToString("yyyy-MM-dd");
                         temp.Diagnosis_Description = reader.GetString(5);
                         temp.Diagnosis_Treatment = reader.GetString(6);
                         temp.Was_Admitted = reader.GetBoolean(7);

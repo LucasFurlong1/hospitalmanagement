@@ -29,7 +29,7 @@ namespace ABC_Hospital_Web_Service.Models
             Patient_Username = "";
             Doctor_Username = "";
             Diagnosis_Name = "";
-            Diagnosis_Date = DateTime.MinValue.ToShortDateString();
+            Diagnosis_Date = DateTime.MinValue.ToString("yyyy-MM-dd");
             Diagnosis_Description = "";
             Diagnosis_Treatment = "";
             Was_Admitted = false;

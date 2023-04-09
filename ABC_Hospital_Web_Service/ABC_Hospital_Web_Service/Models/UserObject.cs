@@ -33,14 +33,14 @@ namespace ABC_Hospital_Web_Service.Models
             Username = "";
             Account_Type = ' ';
             Name = "";
-            Birth_Date = DateOnly.MinValue.ToShortDateString();
+            Birth_Date = DateOnly.MinValue.ToString("yyyy-MM-dd");
             Gender = ' ';
             Address = "";
             Phone_Number = "";
             Email_Address = "";
             Emergency_Contact_Name = "";
             Emergency_Contact_Number = "";
-            Date_Created = DateOnly.MinValue.ToShortDateString();
+            Date_Created = DateOnly.MinValue.ToString("yyyy-MM-dd");
         }
 
         public override bool Equals(object obj)

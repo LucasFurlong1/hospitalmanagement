@@ -28,7 +28,7 @@ namespace ABC_Hospital_Web_Service.Models
             Patient_Username = "";
             Doctor_Username = "";
             Medication_Name = "";
-            Prescribed_Date = DateTime.MinValue.ToShortDateString();
+            Prescribed_Date = DateTime.MinValue.ToString("yyyy-MM-dd");
             Dosage = "";
             Instructions = "";
             Is_Filled = false;

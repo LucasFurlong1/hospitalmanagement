@@ -58,7 +58,7 @@ namespace ABC_Hospital_Web_Service.Services
         public string CreateDiagnosis(DiagnosisObject diagnosis)
         {
             // Format DateTimes
-            diagnosis.Diagnosis_Date = DateTime.Parse(diagnosis.Diagnosis_Date).ToShortDateString();
+            diagnosis.Diagnosis_Date = DateTime.Parse(diagnosis.Diagnosis_Date).ToString("yyyy-MM-dd");
 
             // Generate ID for Diagnosis
             diagnosis.Diagnosis_ID = Guid.NewGuid().ToString();
@@ -77,7 +77,7 @@ namespace ABC_Hospital_Web_Service.Services
         public bool UpdateDiagnosis(DiagnosisObject diagnosis)
         {
             // Format DateTimes
-            diagnosis.Diagnosis_Date = DateTime.Parse(diagnosis.Diagnosis_Date).ToShortDateString();
+            diagnosis.Diagnosis_Date = DateTime.Parse(diagnosis.Diagnosis_Date).ToString("yyyy-MM-dd");
 
             return _sqlservice.UpdateDiagnosis(diagnosis);
         }
