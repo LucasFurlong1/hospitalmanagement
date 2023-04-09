@@ -9,9 +9,9 @@ namespace ABC_Hospital_Web_Service.Controllers
     public class PatientController : ControllerBase
     {
         private PatientService _patientService;
-        public PatientController()
+        public PatientController(IConfiguration appConfig)
         {
-            _patientService = new PatientService();
+            _patientService = new PatientService(appConfig);
         }
 
         [HttpGet("GetPatientInfo")]

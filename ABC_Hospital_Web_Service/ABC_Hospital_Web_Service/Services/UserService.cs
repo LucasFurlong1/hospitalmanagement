@@ -12,17 +12,10 @@ namespace ABC_Hospital_Web_Service.Services
     {
         private SQLInterface _sqlservice;
         private bool formatJson;
-        private readonly ILogger<UserController> _logger;
 
-        public UserService(ILogger<UserController> logger, bool format_json = true)
+        public UserService(IConfiguration appConfig, bool format_json = true)
         {
-            _sqlservice = new SQLInterface();
-            formatJson = format_json;
-            _logger = logger;
-        }
-        public UserService(bool format_json = true)
-        {
-            _sqlservice = new SQLInterface();
+            _sqlservice = new SQLInterface(appConfig);
             formatJson = format_json;
         }
 
@@ -54,8 +47,6 @@ namespace ABC_Hospital_Web_Service.Services
 
         public string GetUserByUsername(string userName)
         {
-            string userJson = "{}";
-
             // Prepare filter field and value
             string fieldName = "Username";
             string filterValue = userName.ToLower();
@@ -63,19 +54,15 @@ namespace ABC_Hospital_Web_Service.Services
             // Get Users from SQL Service
             List<UserObject> user = _sqlservice.RetrieveUsersFiltered(fieldName, filterValue);
 
-            // If User was found, then
-            if (user.Count > 0)
-            {
-                // Convert Users to JSON
-                userJson = JsonSerializer.Serialize<UserObject>(user[0], new JsonSerializerOptions() { WriteIndented = formatJson });
-            }
+            // Convert Users to JSON
+            string userJson = JsonSerializer.Serialize<List<UserObject>>(user, new JsonSerializerOptions() { WriteIndented = formatJson });
 
             return userJson;
         }
 
-        public void CreateUser(UserObject user)
+        public bool CreateUser(UserObject user)
         {
-            _sqlservice.CreateUser(user);
+            return _sqlservice.CreateUser(user);
         }
 
         public string GenerateUsername(string userFullName)

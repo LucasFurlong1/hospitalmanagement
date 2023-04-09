@@ -10,9 +10,9 @@ namespace ABC_Hospital_Web_Service.Controllers
     {
         private DiagnosisService _diagnosisService;
 
-        public DiagnosisController()
+        public DiagnosisController(IConfiguration appConfig)
         {
-            _diagnosisService = new DiagnosisService();
+            _diagnosisService = new DiagnosisService(appConfig);
         }
 
         [HttpGet("GetDiagnoses")]
@@ -36,14 +36,14 @@ namespace ABC_Hospital_Web_Service.Controllers
             return _diagnosisService.CreateDiagnosis(diagnosis);
         }
         [HttpPut("UpdateDiagnosis")]
-        public void UpdateDiagnosis(DiagnosisObject diagnosis)
+        public bool UpdateDiagnosis(DiagnosisObject diagnosis)
         {
-            _diagnosisService.UpdateDiagnosis(diagnosis);
+            return _diagnosisService.UpdateDiagnosis(diagnosis);
         }
         [HttpDelete("DeleteDiagnosis")]
-        public void DeleteDiagnosis(string diagnosis_ID)
+        public bool DeleteDiagnosis(string diagnosis_ID)
         {
-            _diagnosisService.DeleteDiagnosis(diagnosis_ID);
+            return _diagnosisService.DeleteDiagnosis(diagnosis_ID);
         }
     }
 }

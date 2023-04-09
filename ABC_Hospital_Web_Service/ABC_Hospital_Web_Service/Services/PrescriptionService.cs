@@ -8,9 +8,9 @@ namespace ABC_Hospital_Web_Service.Services
         private SQLInterface _sqlservice;
         private bool formatJson;
 
-        public PrescriptionService(bool format_json = true)
+        public PrescriptionService(IConfiguration appConfig, bool format_json = true)
         {
-            _sqlservice = new SQLInterface();
+            _sqlservice = new SQLInterface(appConfig);
             formatJson = format_json;
         }
 
@@ -27,8 +27,6 @@ namespace ABC_Hospital_Web_Service.Services
 
         public string GetPrescriptionByID(string id)
         {
-            string prescriptionJson = "{}";
-
             // Prepare filter field and value
             string fieldName = "Prescription_ID";
             string filterValue = id;
@@ -36,12 +34,8 @@ namespace ABC_Hospital_Web_Service.Services
             // Get Prescription from SQL Service
             List<PrescriptionObject> prescription = _sqlservice.RetrievePrescriptionsFiltered(fieldName, filterValue);
 
-            // If the Prescsription was found, then
-            if (prescription.Count > 0)
-            {
-                // Convert Prescription to JSON
-                prescriptionJson = JsonSerializer.Serialize<PrescriptionObject>(prescription[0], new JsonSerializerOptions() { WriteIndented = formatJson });
-            }
+            // Convert Prescription to JSON
+            string prescriptionJson = JsonSerializer.Serialize<List<PrescriptionObject>>(prescription, new JsonSerializerOptions() { WriteIndented = formatJson });
 
             return prescriptionJson;
         }
@@ -67,20 +61,24 @@ namespace ABC_Hospital_Web_Service.Services
             prescription.Prescription_ID = Guid.NewGuid().ToString();
 
             // Create new Prescription
-            _sqlservice.CreatePrescription(prescription);
+            if (!_sqlservice.CreatePrescription(prescription))
+            {
+                // If the create failed, return empty string to notify UI
+                return "";
+            }
 
             // Return Prescription's ID so UI has access to it
             return prescription.Prescription_ID;
         }
 
-        public void UpdatePrescription(PrescriptionObject prescription)
+        public bool UpdatePrescription(PrescriptionObject prescription)
         {
-            _sqlservice.UpdatePrescription(prescription);
+            return _sqlservice.UpdatePrescription(prescription);
         }
 
-        public void DeletePrescription(string prescription_ID)
+        public bool DeletePrescription(string prescription_ID)
         {
-            _sqlservice.DeletePrescription(prescription_ID);
+            return _sqlservice.DeletePrescription(prescription_ID);
         }
     }
 }

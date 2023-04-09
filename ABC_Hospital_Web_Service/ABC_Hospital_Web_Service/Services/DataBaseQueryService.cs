@@ -5,27 +5,25 @@ using System.Text.RegularExpressions;
 namespace ABC_Hospital_Web_Service.Services
 {
     /* To Do:
-     * Add better error handling
-     * Make database name and connnect string fetchable from appsettings
      * Check all updates and creates sqls for single quotes in field values
      */
     public class SQLInterface
     {
         private string ConnectString;
         OleDbConnection DataBaseConnection;
-        //private IConfiguration Configuration;
+        private IConfiguration _appConfig;
 
-        public SQLInterface()
+        public SQLInterface(IConfiguration appConfig)
         {
-            //Configuration = new IConfiguration();
-            string databaseName = "ABC_Hospital_Database.accdb";// Configuration.GetSection("ConnectionStrings")["Database"];
-            ConnectString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=@;Persist Security Info=False;";// Configuration.GetSection("ConnectionStrings")["AccessConnectString"];
+            _appConfig = appConfig;
+            string databaseName = _appConfig.GetValue<string>("AppSettings:DataBaseName");
+            ConnectString = _appConfig.GetValue<string>("AppSettings:AccessConnectString");
             bool found = false;
             string searchForDatabase = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            searchForDatabase = Path.GetDirectoryName(searchForDatabase);
-            while (!System.IO.File.Exists(searchForDatabase + "\\" + databaseName) && searchForDatabase.Length > 4)
+            searchForDatabase = Path.GetDirectoryName(searchForDatabase) ?? "";
+            while (!System.IO.File.Exists(searchForDatabase + "\\" + databaseName) && searchForDatabase.Length > 3)
             {
-                searchForDatabase = Path.GetDirectoryName(searchForDatabase);
+                searchForDatabase = Path.GetDirectoryName(searchForDatabase) ?? "";
             }
             if (System.IO.File.Exists(searchForDatabase + "\\" + databaseName))
             {
@@ -75,17 +73,23 @@ namespace ABC_Hospital_Web_Service.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                //return ex.Message;
             }
             return null;
         }
 
-        public void StoreUserCred(UserCredObject user)
+        public bool StoreUserCred(UserCredObject user)
         {
             string sqlString =
                 "UPDATE [User] SET Password_Hash = '" + user.Password + "' WHERE Username = '" + user.Username + "';";
 
-            RunNonQuerySQL(sqlString);
+            if(RunNonQuerySQL(sqlString))
+            {
+                if(user.Password == RetrieveUserCred(user.Username).Password)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public UserSessionObject RetrieveUserIdentitySession(string username)
@@ -119,47 +123,27 @@ namespace ABC_Hospital_Web_Service.Services
             return null;
         }
 
-        public void UpdateUserIdentitySession(UserSessionObject session)
+        public bool UpdateUserIdentitySession(UserSessionObject session)
         {
+            UserSessionObject temp;
+            string sqlString;
+
             // First check to see if username is valid
             List<UserObject> user = RetrieveUsersFiltered("Username", session.Username);
             
             // If user doesn't exist, no update is needed
             if(user.Count == 0)
             {
-                return;
+                return false;
             }
 
 
             // Next See if session data exists
             bool firstTime = false;
-            string sqlString =
-                "SELECT Username FROM [Identity_Session] WHERE Username = '" + session.Username + "';";
-
-            OleDbCommand command = new OleDbCommand();
-
-            command.Connection = DataBaseConnection;
-            command.CommandText = sqlString;
-
-            try
+            temp = RetrieveUserIdentitySession(session.Username);
+            if (temp == null || temp.Username == null)
             {
-                using (OleDbDataReader reader = command.ExecuteReader())
-                {
-                    string userSessions = "";
-                    if (reader.Read())
-                    {
-                        userSessions = reader.GetString(0);
-                    }
-                    reader.Close();
-                    if (userSessions == "")
-                    {
-                        firstTime = true;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
+                firstTime = true;
             }
 
             // If it is the user's first time, create a new record
@@ -182,9 +166,16 @@ namespace ABC_Hospital_Web_Service.Services
 
                 RunNonQuerySQL(sqlString);
             }
-            return;
-        }
 
+            // Verify identity session was updated
+            temp = RetrieveUserIdentitySession(session.Username);
+            if (temp.Equals(session))
+            {
+                return true;
+            }
+
+            return false;
+        }
 
         public string CreateNewUsername(string partialUsername)
         {
@@ -212,19 +203,27 @@ namespace ABC_Hospital_Web_Service.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                //return ex.Message;
             }
             return "";
         }
 
-        public void CreateUser(UserObject user)
+        public bool CreateUser(UserObject user)
         {
             string sqlString = "INSERT INTO [User] VALUES ('" + user.Username + "', '" + user.Account_Type + "', '" + "" + "', '" +
-                user.Name + "', '" + user.Birth_Date + "', '" + user.Gender + "', '" +
+                user.Name + "', '" + DateTime.Parse(user.Birth_Date) + "', '" + user.Gender + "', '" +
                 user.Address + "', '" + user.Phone_Number + "', '" + user.Email_Address + "', '" + user.Emergency_Contact_Name +
-                "', '" + user.Emergency_Contact_Number + "', '" + user.Date_Created + "');";
+                "', '" + user.Emergency_Contact_Number + "', '" + DateTime.Parse(user.Date_Created) + "');";
 
-            RunNonQuerySQL(sqlString);
+            if (RunNonQuerySQL(sqlString))
+            {
+                List<UserObject> temp = RetrieveUsersFiltered("Username", user.Username);
+                if (temp.Count > 0 && temp[0].Equals(user))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public List<UserObject> RetrieveUsers()
@@ -248,14 +247,14 @@ namespace ABC_Hospital_Web_Service.Services
                         temp.Username = reader.GetString(0);
                         temp.Account_Type = reader.GetString(1)[0];
                         temp.Name = reader.GetString(3);
-                        temp.Birth_Date = reader.GetDateTime(4);
+                        temp.Birth_Date = reader.GetDateTime(4).ToShortDateString();
                         temp.Gender = reader.GetString(5)[0];
                         temp.Address = reader.GetString(6);
                         temp.Phone_Number = reader.GetString(7);
                         temp.Email_Address = reader.GetString(8);
                         temp.Emergency_Contact_Name = reader.GetString(9);
                         temp.Emergency_Contact_Number = reader.GetString(10);
-                        temp.Date_Created = reader.GetDateTime(11);
+                        temp.Date_Created = reader.GetDateTime(11).ToShortDateString();
                         users.Add(temp);
                     }
                     reader.Close();
@@ -265,9 +264,8 @@ namespace ABC_Hospital_Web_Service.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                //return ex.Message;
             }
-            return null;
+            return new List<UserObject>();
 
         }
 
@@ -291,14 +289,14 @@ namespace ABC_Hospital_Web_Service.Services
                         temp.Username = reader.GetString(0);
                         temp.Account_Type = reader.GetString(1)[0];
                         temp.Name = reader.GetString(3);
-                        temp.Birth_Date = reader.GetDateTime(4);
+                        temp.Birth_Date = reader.GetDateTime(4).ToShortDateString();
                         temp.Gender = reader.GetString(5)[0];
                         temp.Address = reader.GetString(6);
                         temp.Phone_Number = reader.GetString(7);
                         temp.Email_Address = reader.GetString(8);
                         temp.Emergency_Contact_Name = reader.GetString(9);
                         temp.Emergency_Contact_Number = reader.GetString(10);
-                        temp.Date_Created = reader.GetDateTime(11);
+                        temp.Date_Created = reader.GetDateTime(11).ToShortDateString();
                         users.Add(temp);
                     }
                     reader.Close();
@@ -308,18 +306,26 @@ namespace ABC_Hospital_Web_Service.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                //return ex.Message;
             }
-            return null;
+            return new List<UserObject>();
         }
 
 
-        public void CreatePatient(PatientObject patient)
+        public bool CreatePatient(PatientObject patient)
         {
             string sqlString = "INSERT INTO [Patient] VALUES ('" + patient.Username + "', '" +
                 patient.Doctor_Username + "', '" + patient.Last_Interacted + "');";
 
-            RunNonQuerySQL(sqlString);
+            if (RunNonQuerySQL(sqlString))
+            {
+                List<PatientObject> temp = RetrievePatientsFiltered("Username", patient.Username);
+                if (temp.Count > 0 && temp[0].Equals(patient))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public List<PatientObject> RetrievePatients()
@@ -341,7 +347,7 @@ namespace ABC_Hospital_Web_Service.Services
                         PatientObject temp = new PatientObject();
                         temp.Username = reader.GetString(0);
                         temp.Doctor_Username = reader.GetString(1);
-                        temp.Last_Interacted = reader.GetDateTime(2);
+                        temp.Last_Interacted = reader.GetDateTime(2).ToShortDateString();
                         patients.Add(temp);
                     }
                     reader.Close();
@@ -351,9 +357,8 @@ namespace ABC_Hospital_Web_Service.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                //return ex.Message;
             }
-            return null;
+            return new List<PatientObject>();
         }
 
         public List<PatientObject> RetrievePatientsFiltered(string fieldName, string value)
@@ -375,7 +380,7 @@ namespace ABC_Hospital_Web_Service.Services
                         PatientObject temp = new PatientObject();
                         temp.Username = reader.GetString(0);
                         temp.Doctor_Username = reader.GetString(1);
-                        temp.Last_Interacted = reader.GetDateTime(2);
+                        temp.Last_Interacted = reader.GetDateTime(2).ToShortDateString();
                         patients.Add(temp);
                     }
                     reader.Close();
@@ -385,18 +390,26 @@ namespace ABC_Hospital_Web_Service.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                //return ex.Message;
             }
-            return null;
+            return new List<PatientObject>();
         }
 
 
-        public void CreateDoctor(DoctorObject doctor)
+        public bool CreateDoctor(DoctorObject doctor)
         {
             string sqlString = "INSERT INTO [Doctor] VALUES ('" + doctor.Username + "', '" +
                 doctor.Doctor_Department + "', " + doctor.Is_On_Staff + ", '" + doctor.Doctorate_Degree + "');";
 
-            RunNonQuerySQL(sqlString);
+            if (RunNonQuerySQL(sqlString))
+            {
+                List<DoctorObject> temp = RetrieveDoctorsFiltered("Username", doctor.Username);
+                if (temp.Count > 0 && temp[0].Equals(doctor))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public List<DoctorObject> RetrieveDoctors()
@@ -429,9 +442,8 @@ namespace ABC_Hospital_Web_Service.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                //return ex.Message;
             }
-            return null;
+            return new List<DoctorObject>();
         }
 
         public List<DoctorObject> RetrieveDoctorsFiltered(string fieldName, string value)
@@ -464,47 +476,73 @@ namespace ABC_Hospital_Web_Service.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                //return ex.Message;
             }
-            return null;
+            return new List<DoctorObject>();
         }
 
 
-        public void CreatePrescription(PrescriptionObject prescription)
+        public bool CreatePrescription(PrescriptionObject prescription)
         {
             // Escape any single quotes in text fields
-            prescription.Medication_Name = prescription.Medication_Name.Replace("'", "''");
-            prescription.Dosage = prescription.Dosage.Replace("'", "''");
-            prescription.Instructions = prescription.Instructions.Replace("'", "''");
+            string med_name = prescription.Medication_Name.Replace("'", "''");
+            string dosage = prescription.Dosage.Replace("'", "''");
+            string instructions = prescription.Instructions.Replace("'", "''");
 
             string sqlString = "INSERT INTO [Prescription] VALUES ('" + prescription.Prescription_ID + "', '" +
-                prescription.Patient_Username + "', '" + prescription.Doctor_Username + "', '" + prescription.Medication_Name +
-                "', '" + prescription.Prescribed_Date + "', '" + prescription.Dosage + "', '" + prescription.Instructions +
+                prescription.Patient_Username + "', '" + prescription.Doctor_Username + "', '" + med_name +
+                "', '" + DateTime.Parse(prescription.Prescribed_Date) + "', '" + dosage + "', '" + instructions +
                 "', " + prescription.Is_Filled + ");";
 
-            RunNonQuerySQL(sqlString);
+            if (RunNonQuerySQL(sqlString))
+            {
+                List<PrescriptionObject> temp = RetrievePrescriptionsFiltered("Prescription_ID", prescription.Prescription_ID);
+                if (temp.Count > 0 && temp[0].Equals(prescription))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
-        public void UpdatePrescription(PrescriptionObject prescription)
+        public bool UpdatePrescription(PrescriptionObject prescription)
         {
             // Escape any single quotes in text fields
-            prescription.Medication_Name = prescription.Medication_Name.Replace("'", "''");
-            prescription.Dosage = prescription.Dosage.Replace("'", "''");
-            prescription.Instructions = prescription.Instructions.Replace("'", "''");
+            string med_name = prescription.Medication_Name.Replace("'", "''");
+            string dosage = prescription.Dosage.Replace("'", "''");
+            string instructions = prescription.Instructions.Replace("'", "''");
 
-            string sqlString = "UPDATE [Prescription] SET Medication_Name = '" + prescription.Medication_Name +
-                "', Prescribed_Date = '" + prescription.Prescribed_Date + "', Dosage = '" + prescription.Dosage +
-                "', Instructions = '" + prescription.Instructions + "', Is_Filled = " + prescription.Is_Filled +
+            string sqlString = "UPDATE [Prescription] SET Medication_Name = '" + med_name +
+                "', Prescribed_Date = '" + DateTime.Parse(prescription.Prescribed_Date) + "', Dosage = '" + dosage +
+                "', Instructions = '" + instructions + "', Is_Filled = " + prescription.Is_Filled +
                 " WHERE Prescription_ID = '" + prescription.Prescription_ID + "';";
 
-            RunNonQuerySQL(sqlString);
+            if (RunNonQuerySQL(sqlString))
+            {
+                List<PrescriptionObject> temp = RetrievePrescriptionsFiltered("Prescription_ID", prescription.Prescription_ID);
+                if (temp.Count > 0 && temp[0].Equals(prescription))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
-        public void DeletePrescription(string prescription_ID)
+        public bool DeletePrescription(string prescription_ID)
         {
             string sqlString = "DELETE FROM [Prescription] WHERE Prescription_ID = '" + prescription_ID + "';";
 
-            RunNonQuerySQL(sqlString);
+            if (RunNonQuerySQL(sqlString))
+            {
+                List<PrescriptionObject> temp = RetrievePrescriptionsFiltered("Prescription_ID", prescription_ID);
+                if (temp.Count == 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public List<PrescriptionObject> RetrievePrescriptions()
@@ -528,7 +566,7 @@ namespace ABC_Hospital_Web_Service.Services
                         temp.Patient_Username = reader.GetString(1);
                         temp.Doctor_Username = reader.GetString(2);
                         temp.Medication_Name = reader.GetString(3);
-                        temp.Prescribed_Date = reader.GetDateTime(4);
+                        temp.Prescribed_Date = reader.GetDateTime(4).ToShortDateString();
                         temp.Dosage = reader.GetString(5);
                         temp.Instructions = reader.GetString(6);
                         temp.Is_Filled = reader.GetBoolean(7);
@@ -541,9 +579,8 @@ namespace ABC_Hospital_Web_Service.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                //return ex.Message;
             }
-            return null;
+            return new List<PrescriptionObject>();
         }
 
         public List<PrescriptionObject> RetrievePrescriptionsFiltered(string fieldName, string value)
@@ -567,7 +604,7 @@ namespace ABC_Hospital_Web_Service.Services
                         temp.Patient_Username = reader.GetString(1);
                         temp.Doctor_Username = reader.GetString(2);
                         temp.Medication_Name = reader.GetString(3);
-                        temp.Prescribed_Date = reader.GetDateTime(4);
+                        temp.Prescribed_Date = reader.GetDateTime(4).ToShortDateString();
                         temp.Dosage = reader.GetString(5);
                         temp.Instructions = reader.GetString(6);
                         temp.Is_Filled = reader.GetBoolean(7);
@@ -580,47 +617,70 @@ namespace ABC_Hospital_Web_Service.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                //return ex.Message;
             }
-            return null;
+            return new List<PrescriptionObject>();
         }
 
-        public void CreateDiagnosis(DiagnosisObject diagnosis)
+        public bool CreateDiagnosis(DiagnosisObject diagnosis)
         {
             // Escape any single quotes in text fields
-            diagnosis.Diagnosis_Name = diagnosis.Diagnosis_Name.Replace("'", "''");
-            diagnosis.Diagnosis_Description = diagnosis.Diagnosis_Description.Replace("'", "''");
-            diagnosis.Diagnosis_Treatment = diagnosis.Diagnosis_Treatment.Replace("'", "''");
+            string diag_name = diagnosis.Diagnosis_Name.Replace("'", "''");
+            string diag_desc = diagnosis.Diagnosis_Description.Replace("'", "''");
+            string diag_treatment = diagnosis.Diagnosis_Treatment.Replace("'", "''");
 
             string sqlString = "INSERT INTO [Diagnosis] VALUES ('" + diagnosis.Diagnosis_ID + "', '" +
-                diagnosis.Patient_Username + "', '" + diagnosis.Doctor_Username + "', '" + diagnosis.Diagnosis_Name + "', '" +
-                diagnosis.Diagnosis_Date + "', '" + diagnosis.Diagnosis_Description + "', '" + diagnosis.Diagnosis_Treatment +
+                diagnosis.Patient_Username + "', '" + diagnosis.Doctor_Username + "', '" + diag_name + "', '" +
+                DateTime.Parse(diagnosis.Diagnosis_Date) + "', '" + diag_desc + "', '" + diag_treatment +
                 "', " + diagnosis.Was_Admitted + ", " + diagnosis.Is_Resolved + ");";
 
-            RunNonQuerySQL(sqlString);
+            if(RunNonQuerySQL(sqlString))
+            {
+                List<DiagnosisObject> temp = RetrieveDiagnosesFiltered("Diagnosis_ID", diagnosis.Diagnosis_ID);
+                if(temp.Count > 0 && temp[0].Equals(diagnosis))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
-        public void UpdateDiagnosis(DiagnosisObject diagnosis)
+        public bool UpdateDiagnosis(DiagnosisObject diagnosis)
         {
             // Escape any single quotes in text fields
-            diagnosis.Diagnosis_Name = diagnosis.Diagnosis_Name.Replace("'", "''");
-            diagnosis.Diagnosis_Description = diagnosis.Diagnosis_Description.Replace("'", "''");
-            diagnosis.Diagnosis_Treatment = diagnosis.Diagnosis_Treatment.Replace("'", "''");
+            string diag_name = diagnosis.Diagnosis_Name.Replace("'", "''");
+            string diag_desc = diagnosis.Diagnosis_Description.Replace("'", "''");
+            string diag_treatment = diagnosis.Diagnosis_Treatment.Replace("'", "''");
 
-            string sqlString = "UPDATE [Diagnosis] SET Diagnosis_Name = '" + diagnosis.Diagnosis_Name +
-                "', Diagnosis_Date = '" + diagnosis.Diagnosis_Date + "', Diagnosis_Description = '" +
-                diagnosis.Diagnosis_Description + "', Diagnosis_Treatment = '" + diagnosis.Diagnosis_Treatment +
+            string sqlString = "UPDATE [Diagnosis] SET Diagnosis_Name = '" + diag_name +
+                "', Diagnosis_Date = '" + DateTime.Parse(diagnosis.Diagnosis_Date) + "', Diagnosis_Description = '" +
+                diag_desc + "', Diagnosis_Treatment = '" + diag_treatment +
                 "', Was_Admitted = " + diagnosis.Was_Admitted + ", Is_Resolved = " + diagnosis.Is_Resolved +
                 " WHERE Diagnosis_ID = '" + diagnosis.Diagnosis_ID + "';";
 
-            RunNonQuerySQL(sqlString);
+            if (RunNonQuerySQL(sqlString))
+            {
+                List<DiagnosisObject> temp = RetrieveDiagnosesFiltered("Diagnosis_ID", diagnosis.Diagnosis_ID);
+                if (temp.Count > 0 && temp[0].Equals(diagnosis))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
-        public void DeleteDiagnosis(string diagnosis_ID)
+        public bool DeleteDiagnosis(string diagnosis_ID)
         {
             string sqlString = "DELETE FROM [Diagnosis] WHERE Diagnosis_ID = '" + diagnosis_ID + "';";
 
-            RunNonQuerySQL(sqlString);
+            if (RunNonQuerySQL(sqlString))
+            {
+                List<DiagnosisObject> temp = RetrieveDiagnosesFiltered("Diagnosis_ID", diagnosis_ID);
+                if (temp.Count == 0)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public List<DiagnosisObject> RetrieveDiagnoses()
@@ -644,7 +704,7 @@ namespace ABC_Hospital_Web_Service.Services
                         temp.Patient_Username = reader.GetString(1);
                         temp.Doctor_Username = reader.GetString(2);
                         temp.Diagnosis_Name = reader.GetString(3);
-                        temp.Diagnosis_Date = reader.GetDateTime(4);
+                        temp.Diagnosis_Date = reader.GetDateTime(4).ToShortDateString();
                         temp.Diagnosis_Description = reader.GetString(5);
                         temp.Diagnosis_Treatment = reader.GetString(6);
                         temp.Was_Admitted = reader.GetBoolean(7);
@@ -658,9 +718,8 @@ namespace ABC_Hospital_Web_Service.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                //return ex.Message;
             }
-            return null;
+            return new List<DiagnosisObject>();
         }
 
         public List<DiagnosisObject> RetrieveDiagnosesFiltered(string fieldName, string value)
@@ -684,7 +743,7 @@ namespace ABC_Hospital_Web_Service.Services
                         temp.Patient_Username = reader.GetString(1);
                         temp.Doctor_Username = reader.GetString(2);
                         temp.Diagnosis_Name = reader.GetString(3);
-                        temp.Diagnosis_Date = reader.GetDateTime(4);
+                        temp.Diagnosis_Date = reader.GetDateTime(4).ToShortDateString();
                         temp.Diagnosis_Description = reader.GetString(5);
                         temp.Diagnosis_Treatment = reader.GetString(6);
                         temp.Was_Admitted = reader.GetBoolean(7);
@@ -698,12 +757,11 @@ namespace ABC_Hospital_Web_Service.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                //return ex.Message;
             }
-            return null;
+            return new List<DiagnosisObject>();
         }
 
-        private void RunNonQuerySQL(string sqlString)
+        private bool RunNonQuerySQL(string sqlString)
         {
 
             OleDbCommand command = new OleDbCommand();
@@ -719,7 +777,9 @@ namespace ABC_Hospital_Web_Service.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                return false;
             }
+            return true;
         }
     }
 }

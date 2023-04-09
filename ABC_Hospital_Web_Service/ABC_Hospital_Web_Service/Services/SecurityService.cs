@@ -6,13 +6,27 @@ namespace ABC_Hospital_Web_Service.Services
 {
     public class SecurityService
     {
+        private readonly IConfiguration _appConfig;
         private SQLInterface _sqlservice;
         private bool formatJson;
 
-        public SecurityService(bool format_json = true)
+        public SecurityService(IConfiguration appConfig, bool format_json = true)
         {
-            _sqlservice = new SQLInterface();
+            _appConfig = appConfig;
+            _sqlservice = new SQLInterface(appConfig);
             formatJson = format_json;
+        }
+
+        public string GetChatBotConnectionData()
+        {
+            List<KeyTokenPair> chatApiConfig = new List<KeyTokenPair>();
+            chatApiConfig.Add(new KeyTokenPair());
+            chatApiConfig[0].Key = _appConfig.GetValue<string>("AppSettings:ChatApi:Key");
+            chatApiConfig[0].Token = _appConfig.GetValue<string>("AppSettings:ChatApi:Token");
+
+            string json = JsonSerializer.Serialize<List<KeyTokenPair>>(chatApiConfig, new JsonSerializerOptions() { WriteIndented = formatJson });
+
+            return json;
         }
 
         public bool CheckUserCredentials(string username, string password)
@@ -28,33 +42,30 @@ namespace ABC_Hospital_Web_Service.Services
             return success;
         }
 
-        public void SaveNewCredentials(string username, string password)
+        public bool SaveNewCredentials(string username, string password)
         {
             UserCredObject userCred = new UserCredObject(username, password);
             userCred = HashPassword(userCred);
             if (VerifyHashedPassword(userCred, password) == PasswordVerificationResult.Success)
             {
-                _sqlservice.StoreUserCred(userCred);
+                return _sqlservice.StoreUserCred(userCred);
             }
+            return false;
         }
 
         public string GetSessionExpirationTime(string username)
         {
-            string sessionJson = "{}";
+            List<UserSessionObject> session = new List<UserSessionObject>();
 
-            UserSessionObject session = _sqlservice.RetrieveUserIdentitySession(username);
+            session.Add(_sqlservice.RetrieveUserIdentitySession(username));
 
-            if (session.Username != null)
-            {
-                sessionJson = JsonSerializer.Serialize<UserSessionObject>(session, new JsonSerializerOptions() { WriteIndented = formatJson });
-            }
-
+            string sessionJson = JsonSerializer.Serialize<List<UserSessionObject>>(session, new JsonSerializerOptions() { WriteIndented = formatJson });
             return sessionJson;
         }
 
-        public void UpdateSessionData(UserSessionObject session)
+        public bool UpdateSessionData(UserSessionObject session)
         {
-            _sqlservice.UpdateUserIdentitySession(session);
+            return _sqlservice.UpdateUserIdentitySession(session);
         }
 
         private UserCredObject HashPassword(UserCredObject userUnHashed)

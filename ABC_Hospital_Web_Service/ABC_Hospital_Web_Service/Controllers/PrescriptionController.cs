@@ -10,9 +10,9 @@ namespace ABC_Hospital_Web_Service.Controllers
     {
         private PrescriptionService _prescriptionService;
 
-        public PrescriptionController()
+        public PrescriptionController(IConfiguration appConfig)
         {
-            _prescriptionService = new PrescriptionService();
+            _prescriptionService = new PrescriptionService(appConfig);
         }
 
         [HttpGet("GetPrescriptions")]
@@ -36,14 +36,14 @@ namespace ABC_Hospital_Web_Service.Controllers
             return _prescriptionService.CreatePrescription(prescription);
         }
         [HttpPut("UpdatePrescription")]
-        public void UpdatePrescription(PrescriptionObject prescription)
+        public bool UpdatePrescription(PrescriptionObject prescription)
         {
-            _prescriptionService.UpdatePrescription(prescription);
+            return _prescriptionService.UpdatePrescription(prescription);
         }
         [HttpDelete("DeletePrescription")]
-        public void DeletePrescription(string prescription_ID)
+        public bool DeletePrescription(string prescription_ID)
         {
-            _prescriptionService.DeletePrescription(prescription_ID);
+            return _prescriptionService.DeletePrescription(prescription_ID);
         }
     }
 }

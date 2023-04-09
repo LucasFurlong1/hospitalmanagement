@@ -2,24 +2,31 @@
 
 namespace ABC_Hospital_Web_Service.Models
 {
-    public class NewPatientObject:PatientObject
+    public class NewPatientObject : PatientObject
     {
         [JsonInclude]
-        public string? Password { get; set; }
+        public string Password { get; set; }
+
+        public NewPatientObject()
+        {
+            Password = "";
+        }
     }
-    public class PatientObject:UserObject
+    public class PatientObject : UserObject
     {
         [JsonInclude]
-        public string? Doctor_Username { get; set; }
+        public string Doctor_Username { get; set; }
         [JsonInclude]
-        public DateTime? Last_Interacted { get; set; }
+        public string Last_Interacted { get; set; }
 
         public PatientObject()
         {
-
+            Doctor_Username = "";
+            Last_Interacted = DateTime.MinValue.ToShortDateString();
         }
         public PatientObject(UserObject userObject)
         {
+            this.Username = userObject.Username;
             this.Account_Type = userObject.Account_Type;
             this.Name = userObject.Name;
             this.Birth_Date = userObject.Birth_Date;
@@ -30,9 +37,12 @@ namespace ABC_Hospital_Web_Service.Models
             this.Emergency_Contact_Name = userObject.Emergency_Contact_Name;
             this.Emergency_Contact_Number = userObject.Emergency_Contact_Number;
             this.Date_Created = userObject.Date_Created;
+            Doctor_Username = "";
+            Last_Interacted = DateTime.MinValue.ToShortDateString();
         }
         public static PatientObject operator +(PatientObject p, UserObject u)
         {
+            p.Username = u.Username;
             p.Account_Type = u.Account_Type;
             p.Name = u.Name;
             p.Birth_Date = u.Birth_Date;
@@ -44,6 +54,29 @@ namespace ABC_Hospital_Web_Service.Models
             p.Emergency_Contact_Number = u.Emergency_Contact_Number;
             p.Date_Created = u.Date_Created;
             return p;
+        }
+
+        public override bool Equals(object obj)
+        {
+            PatientObject patient2 = obj as PatientObject ?? new PatientObject();
+            if (patient2 != null
+                && Doctor_Username.Equals(patient2.Doctor_Username)
+                && Last_Interacted.Equals(patient2.Last_Interacted)
+                && Username.Equals(patient2.Username)
+                && Account_Type.Equals(patient2.Account_Type)
+                && Name.Equals(patient2.Name)
+                && Birth_Date.Equals(patient2.Birth_Date)
+                && Gender.Equals(patient2.Gender)
+                && Address.Equals(patient2.Address)
+                && Phone_Number.Equals(patient2.Phone_Number)
+                && Emergency_Contact_Name.Equals(patient2.Emergency_Contact_Name)
+                && Emergency_Contact_Number.Equals(patient2.Emergency_Contact_Number)
+                && Date_Created.Equals(patient2.Date_Created))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

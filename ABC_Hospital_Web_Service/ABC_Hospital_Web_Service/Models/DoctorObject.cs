@@ -6,37 +6,49 @@ namespace ABC_Hospital_Web_Service.Models
     public class NewDoctorObject : DoctorObject
     {
         [JsonInclude]
-        public string? Password { get; set; }
+        public string Password { get; set; }
+
+        public NewDoctorObject()
+        {
+            Password = "";
+        }
     }
     public class DoctorObject : UserObject
     {
         [JsonInclude]
-        public string? Doctor_Department { get; set; }
+        public string Doctor_Department { get; set; }
         [JsonInclude]
-        public bool? Is_On_Staff { get; set; }
+        public bool Is_On_Staff { get; set; }
         [JsonInclude]
-        public string? Doctorate_Degree { get; set; }
+        public string Doctorate_Degree { get; set; }
 
         public DoctorObject()
         {
-
+            Doctor_Department = "";
+            Is_On_Staff = false;
+            Doctorate_Degree = "";
         }
         public DoctorObject(UserObject userObject)
         {
-            this.Account_Type = userObject.Account_Type;
-            this.Name = userObject.Name;
-            this.Birth_Date = userObject.Birth_Date;
-            this.Gender = userObject.Gender;
-            this.Address = userObject.Address;
-            this.Phone_Number = userObject.Phone_Number;
-            this.Email_Address = userObject.Email_Address;
-            this.Emergency_Contact_Name = userObject.Emergency_Contact_Name;
-            this.Emergency_Contact_Number = userObject.Emergency_Contact_Number;
-            this.Date_Created = userObject.Date_Created;
+            Username = userObject.Username;
+            Account_Type = userObject.Account_Type;
+            Name = userObject.Name;
+            Birth_Date = userObject.Birth_Date;
+            Gender = userObject.Gender;
+            Address = userObject.Address;
+            Phone_Number = userObject.Phone_Number;
+            Email_Address = userObject.Email_Address;
+            Emergency_Contact_Name = userObject.Emergency_Contact_Name;
+            Emergency_Contact_Number = userObject.Emergency_Contact_Number;
+            Date_Created = userObject.Date_Created;
+            Doctor_Department = "";
+            Is_On_Staff = false;
+            Doctorate_Degree = "";
         }
 
         public static DoctorObject operator +(DoctorObject d, UserObject u)
         {
+            d.Username = u.Username;
             d.Account_Type = u.Account_Type;
             d.Name = u.Name;
             d.Birth_Date = u.Birth_Date;
@@ -48,6 +60,30 @@ namespace ABC_Hospital_Web_Service.Models
             d.Emergency_Contact_Number = u.Emergency_Contact_Number;
             d.Date_Created = u.Date_Created;
             return d;
+        }
+
+        public override bool Equals(object obj)
+        {
+            DoctorObject doc2 = obj as DoctorObject ?? new DoctorObject();
+            if (doc2 != null
+                && Doctor_Department.Equals(doc2.Doctor_Department)
+                && Is_On_Staff.Equals(doc2.Is_On_Staff)
+                && Doctorate_Degree.Equals(doc2.Doctorate_Degree)
+                && Username.Equals(doc2.Username)
+                && Account_Type.Equals(doc2.Account_Type)
+                && Name.Equals(doc2.Name)
+                && Birth_Date.Equals(doc2.Birth_Date)
+                && Gender.Equals(doc2.Gender)
+                && Address.Equals(doc2.Address)
+                && Phone_Number.Equals(doc2.Phone_Number)
+                && Emergency_Contact_Name.Equals(doc2.Emergency_Contact_Name)
+                && Emergency_Contact_Number.Equals(doc2.Emergency_Contact_Number)
+                && Date_Created.Equals(doc2.Date_Created))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

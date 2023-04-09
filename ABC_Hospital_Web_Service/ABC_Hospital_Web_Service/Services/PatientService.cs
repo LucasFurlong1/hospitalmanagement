@@ -10,18 +10,16 @@ namespace ABC_Hospital_Web_Service.Services
         private SQLInterface _sqlservice;
         private bool formatJson;
 
-        public PatientService(bool format_json = true)
+        public PatientService(IConfiguration appConfig, bool format_json = true)
         {
-            _securityService = new SecurityService();
-            _userService = new UserService();
-            _sqlservice = new SQLInterface();
+            _securityService = new SecurityService(appConfig);
+            _userService = new UserService(appConfig);
+            _sqlservice = new SQLInterface(appConfig);
             formatJson = format_json;
         }
 
         public string GetPatientInfo(string userName)
         {
-            string patientJson = "{}";
-
             // Prepare filter field and value
             string fieldName = "Patient_Username";
             string filterValue = userName.ToLower();
@@ -37,10 +35,9 @@ namespace ABC_Hospital_Web_Service.Services
 
                 // Merge Data
                 patient[0] = patient[0] + temp;
-
-                // Convert Patient to JSON
-                patientJson = JsonSerializer.Serialize<PatientObject>(patient[0], new JsonSerializerOptions() { WriteIndented = formatJson });
             }
+            // Convert Patient to JSON
+            string patientJson = JsonSerializer.Serialize<List<PatientObject>>(patient, new JsonSerializerOptions() { WriteIndented = formatJson });
 
             return patientJson;
         }
@@ -61,7 +58,7 @@ namespace ABC_Hospital_Web_Service.Services
                 UserObject temp = _sqlservice.RetrieveUsersFiltered("Username", patients[i].Username)[0];
 
                 // Merge Data
-                patients[i] = patients[0] + temp;
+                patients[i] = patients[i] + temp;
             }
 
             // Convert Patients to JSON
@@ -76,13 +73,25 @@ namespace ABC_Hospital_Web_Service.Services
             patient.Username = _userService.GenerateUsername(patient.Name);
 
             // Create User record
-            _userService.CreateUser(patient);
+            if(!_userService.CreateUser(patient))
+            {
+                // If the create failed, return empty string to notify UI
+                return "";
+            }
 
             // Store User Credentials
-            _securityService.SaveNewCredentials(patient.Username, patient.Password);
+            if(!_securityService.SaveNewCredentials(patient.Username, patient.Password))
+            {
+                // If the save failed, return empty string to notify UI
+                return "";
+            }
 
             // Create Patient record
-            _sqlservice.CreatePatient(patient);
+            if(!_sqlservice.CreatePatient(patient))
+            {
+                // If the create failed, return empty string to notify UI
+                return "";
+            }
 
             // Return Username so UI has access to it
             return patient.Username;

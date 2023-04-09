@@ -8,9 +8,9 @@ namespace ABC_Hospital_Web_Service.Services
         private SQLInterface _sqlservice;
         private bool formatJson;
 
-        public DiagnosisService(bool format_json = true)
+        public DiagnosisService(IConfiguration appConfig, bool format_json = true)
         {
-            _sqlservice = new SQLInterface();
+            _sqlservice = new SQLInterface(appConfig);
             formatJson = format_json;
         }
 
@@ -27,8 +27,6 @@ namespace ABC_Hospital_Web_Service.Services
 
         public string GetDiagnosisByID(string id)
         {
-            string diagnosisJson = "{}";
-
             // Prepare filter field and value
             string fieldName = "Diagnosis_ID";
             string filterValue = id;
@@ -36,12 +34,8 @@ namespace ABC_Hospital_Web_Service.Services
             // Get Diagnosis from SQL Service
             List<DiagnosisObject> diagnosis = _sqlservice.RetrieveDiagnosesFiltered(fieldName, filterValue);
 
-            // If a Diagnosis was returned, then
-            if (diagnosis.Count > 0)
-            {
-                // Convert Diagnosis to JSON
-                diagnosisJson = JsonSerializer.Serialize<DiagnosisObject>(diagnosis[0], new JsonSerializerOptions() { WriteIndented = formatJson });
-            }
+            // Convert Diagnosis to JSON
+            string diagnosisJson = JsonSerializer.Serialize<List<DiagnosisObject>>(diagnosis, new JsonSerializerOptions() { WriteIndented = formatJson });
 
             return diagnosisJson;
         }
@@ -67,20 +61,24 @@ namespace ABC_Hospital_Web_Service.Services
             diagnosis.Diagnosis_ID = Guid.NewGuid().ToString();
 
             // Create new Diagnosis
-            _sqlservice.CreateDiagnosis(diagnosis);
+            if(!_sqlservice.CreateDiagnosis(diagnosis))
+            {
+                // If the create failed, return empty string to notify UI
+                return "";
+            }
 
             // Return Diagnosis's ID so UI has access to it
             return diagnosis.Diagnosis_ID;
         }
 
-        public void UpdateDiagnosis(DiagnosisObject diagnosis)
+        public bool UpdateDiagnosis(DiagnosisObject diagnosis)
         {
-            _sqlservice.UpdateDiagnosis(diagnosis);
+            return _sqlservice.UpdateDiagnosis(diagnosis);
         }
 
-        public void DeleteDiagnosis(string diagnosis_ID)
+        public bool DeleteDiagnosis(string diagnosis_ID)
         {
-            _sqlservice.DeleteDiagnosis(diagnosis_ID);
+            return _sqlservice.DeleteDiagnosis(diagnosis_ID);
         }
     }
 }

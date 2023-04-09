@@ -10,9 +10,9 @@ namespace ABC_Hospital_Web_Service.Controllers
     {
         private SecurityService _securityService;
 
-        public SecurityController()
+        public SecurityController(IConfiguration appConfig)
         {
-            _securityService = new SecurityService();
+            _securityService = new SecurityService(appConfig);
         }
 
         // Security Endpoints
@@ -24,9 +24,9 @@ namespace ABC_Hospital_Web_Service.Controllers
 
         // For testing purposes, allows new password to be assigned to a user
         [HttpPost("UpdateCredentials")]
-        public void UpdateCredentials([FromBody] UserCredObject requestObj)
+        public bool UpdateCredentials([FromBody] UserCredObject requestObj)
         {
-            _securityService.SaveNewCredentials(requestObj.Username, requestObj.Password);
+            return _securityService.SaveNewCredentials(requestObj.Username, requestObj.Password);
         }
         [HttpGet("GetSessionExpirationTime")]
         public ActionResult<string> GetSessionExpirationTime(string username)
@@ -34,9 +34,14 @@ namespace ABC_Hospital_Web_Service.Controllers
             return _securityService.GetSessionExpirationTime(username);
         }
         [HttpPost("UpdateSessionData")]
-        public void UpdateSessionData([FromBody] UserSessionObject newSession)
+        public bool UpdateSessionData([FromBody] UserSessionObject newSession)
         {
-            _securityService.UpdateSessionData(newSession);
+            return _securityService.UpdateSessionData(newSession);
+        }
+        [HttpGet("GetChatBotData")]
+        public string GetChatBotData()
+        {
+            return _securityService.GetChatBotConnectionData();
         }
     }
 }

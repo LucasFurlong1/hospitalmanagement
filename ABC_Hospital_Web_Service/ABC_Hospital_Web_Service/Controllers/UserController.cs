@@ -10,12 +10,10 @@ namespace ABC_Hospital_Web_Service.Controllers
     public class UserController : ControllerBase
     {
         private UserService _userService;
-        private readonly ILogger<UserController> _logger;
 
-        public UserController(ILogger<UserController> logger)
+        public UserController(IConfiguration appConfig)
         {
-            _userService = new UserService(logger);
-            _logger = logger;
+            _userService = new UserService(appConfig);
         }
 
         [HttpGet("GetUser")]
@@ -29,6 +27,7 @@ namespace ABC_Hospital_Web_Service.Controllers
         {
             return _userService.GetUsers();
         }
+
         [HttpGet("GetUsersByAccountType")]
         public ActionResult<string> GetUsers(string accountType)
         {

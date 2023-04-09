@@ -10,9 +10,9 @@ namespace ABC_Hospital_Web_Service.Controllers
     {
         private DoctorService _doctorService;
 
-        public DoctorController()
+        public DoctorController(IConfiguration appConfig)
         {
-            _doctorService = new DoctorService();
+            _doctorService = new DoctorService(appConfig);
         }
 
         [HttpGet("GetDoctorInfo")]
