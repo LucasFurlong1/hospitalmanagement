@@ -1,0 +1,128 @@
+/* General container stuffs */
+.patient-info-page-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.diagnoses-block, .prescriptions-block {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2rem;
+    margin-left: 12rem;
+    margin-right: 12rem;
+    border: 3px solid white;
+    border-radius: 1rem;
+}
+
+/* General diag box stuffs */
+.diag-info-1 {
+    border-bottom: 3px solid white;
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+}
+
+.diag-info-2 {
+    border-bottom: 3px solid white;
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    padding-left: 1rem;
+}
+
+.diag-info-3 {
+    border-bottom: 3px solid white;
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+}
+
+.diag-info-4 {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+
+}
+
+.diag-info-top-1 {
+    display: flex;
+    align-items: center;
+    border-right: 3px solid white;
+    padding-right: 8rem;
+}
+
+.diag-info-top-2 {
+    display: flex;
+    align-items: center;
+    padding-left: 5.5rem;
+}
+
+.diag-info-bottom-1 {
+    border-right: 3px solid white;
+    padding-right: 8rem;
+}
+
+.diag-info-bottom-2 {
+    padding-left: 8rem;
+}
+
+/* General pres box stuffs */
+.pres-info-1 {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    border-bottom: 3px solid white;
+}
+
+.pres-info-2 {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    border-bottom: 3px solid white;
+}
+
+.pres-info-3 {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    border-bottom: 3px solid white;
+    padding-left: 1rem;
+}
+
+.pres-info-4 {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+}
+
+.pres-info-middle-1 {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    border-right: 3px solid white;
+    padding-right: 7rem;
+}
+
+.pres-info-middle-2 {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    padding-left: 7rem;
+}
+
+/* General stuffs */
+.info-title {
+    font-weight: bold;
+    padding-right: 2rem;
+}
+

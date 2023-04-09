@@ -6,13 +6,14 @@
   
   .patient-block {
     border-radius: 5px;
-    border: 2px solid white;
+    border: 3px solid white;
     margin: 1rem;
+
   }
   
-  
   .doctor-data-container {
-    flex-direction: column;
+    display: flex;
+    flex-direction: row;
     align-items: center;
     align-content: center;
     justify-content: center;
@@ -21,42 +22,83 @@
     margin-right: 2rem;
     order: 1;
   }
-  
-  .patient-block, .patient-name, .patient-email, .doctor-data-container{
+
+  .block {
     display: flex;
-  }
-  
-  .patient-name, .patient-email, .patient-phone {
-    width: 100%;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+  }
+
+  .pat-block-1, .pat-block-2, .pat-block-top-1, .pat-block-top-2, .pat-block-middle-top-1, .pat-block-middle-top-2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-content: center;  
+  }
+
+  .pat-block-1 {
+    border-bottom: 3px solid white;
+    width: 100%;
+  }
+  
+  .pat-block-top-1 {
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+    border-right: 3px solid white;
+  }
+
+  .pat-block-top-2 {
     padding-left: 1rem;
+  }
+
+  .pat-block-2 {
+    border-bottom: 3px solid white;
+    width: 100%;
+  }
+
+  .pat-block-middle-top-1 {
+    padding-right: 3rem;
+    padding-left: 1rem;
+  }
+
+  .pat-block-middle-top-2 {
     padding-right: 1rem;
   }
 
-  .title {
-    font-size: x-large;
-    font-weight: bold;
-  }
-
-  .patient-phone, .patient-name {
-    white-space: nowrap;
-  }
-
-  .block-1 {
+  .pat-block-3 {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    border-bottom: 3px solid white;
+    width: 100%;
+  }
+
+  .pat-block-middle-bottom-1, .pat-block-middle-bottom-2 {
+    display: flex;
     align-items: center;
-    justify-content: center;
-  }
-
-  .name-label {
+    align-content: center;
     padding-left: 1rem;
-    font-size: large;
-    font-weight: bold;
   }
 
-  .doc-lbl {
-    font-size: large;
+  .pat-block-middle-bottom-1 {
+    padding-right: 1rem;
+  }
+
+  .pat-block-4 {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .pat-block-bottom-1, .pat-block-bottom-2 {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: left;
+    padding-left: 1rem;
+  }
+
+  .label-title {
     font-weight: bold;
+    padding-right: 0.5rem;
   }
