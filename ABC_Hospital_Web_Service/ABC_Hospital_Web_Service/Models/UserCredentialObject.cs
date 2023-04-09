@@ -9,5 +9,15 @@ namespace ABC_Hospital_Web_Service.Models
         [JsonInclude]
         public string? Password { get; set; }
 
+        public UserCredObject()
+        {
+            Username = null;
+            Password = null;
+        }
+        public UserCredObject(string? username, string? password)
+        {
+            Username = username;
+            Password = password;
+        }
     }
 }

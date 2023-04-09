@@ -1,5 +1,4 @@
-﻿using ABC_Hospital_Web_Service.Controllers;
-using ABC_Hospital_Web_Service.Models;
+﻿using ABC_Hospital_Web_Service.Models;
 using System.Text.Json;
 
 namespace ABC_Hospital_Web_Service.Services
@@ -8,13 +7,11 @@ namespace ABC_Hospital_Web_Service.Services
     {
         private SQLInterface _sqlservice;
         private bool formatJson;
-        private readonly ILogger<UserController> _logger;
 
-        public DiagnosisService(ILogger<UserController> logger, bool format_json = true)
+        public DiagnosisService(bool format_json = true)
         {
             _sqlservice = new SQLInterface();
             formatJson = format_json;
-            _logger = logger;
         }
 
         public string GetDiagnoses()
@@ -30,15 +27,21 @@ namespace ABC_Hospital_Web_Service.Services
 
         public string GetDiagnosisByID(string id)
         {
+            string diagnosisJson = "{}";
+
             // Prepare filter field and value
             string fieldName = "Diagnosis_ID";
             string filterValue = id;
 
             // Get Diagnosis from SQL Service
-            DiagnosisObject diagnosis = _sqlservice.RetrieveDiagnosesFiltered(fieldName, filterValue)[0];
+            List<DiagnosisObject> diagnosis = _sqlservice.RetrieveDiagnosesFiltered(fieldName, filterValue);
 
-            // Convert Diagnosis to JSON
-            string diagnosisJson = JsonSerializer.Serialize<DiagnosisObject>(diagnosis, new JsonSerializerOptions() { WriteIndented = formatJson });
+            // If a Diagnosis was returned, then
+            if (diagnosis.Count > 0)
+            {
+                // Convert Diagnosis to JSON
+                diagnosisJson = JsonSerializer.Serialize<DiagnosisObject>(diagnosis[0], new JsonSerializerOptions() { WriteIndented = formatJson });
+            }
 
             return diagnosisJson;
         }
@@ -56,6 +59,28 @@ namespace ABC_Hospital_Web_Service.Services
             string diagnosesJson = JsonSerializer.Serialize<List<DiagnosisObject>>(diagnoses, new JsonSerializerOptions() { WriteIndented = formatJson });
 
             return diagnosesJson;
+        }
+
+        public string CreateDiagnosis(DiagnosisObject diagnosis)
+        {
+            // Generate ID for Diagnosis
+            diagnosis.Diagnosis_ID = Guid.NewGuid().ToString();
+
+            // Create new Diagnosis
+            _sqlservice.CreateDiagnosis(diagnosis);
+
+            // Return Diagnosis's ID so UI has access to it
+            return diagnosis.Diagnosis_ID;
+        }
+
+        public void UpdateDiagnosis(DiagnosisObject diagnosis)
+        {
+            _sqlservice.UpdateDiagnosis(diagnosis);
+        }
+
+        public void DeleteDiagnosis(string diagnosis_ID)
+        {
+            _sqlservice.DeleteDiagnosis(diagnosis_ID);
         }
     }
 }

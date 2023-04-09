@@ -1,49 +1,46 @@
-﻿using ABC_Hospital_Web_Service.Controllers;
-using ABC_Hospital_Web_Service.Models;
-using System.Reflection.PortableExecutable;
+﻿using ABC_Hospital_Web_Service.Models;
 using System.Text.Json;
 
 namespace ABC_Hospital_Web_Service.Services
 {
     public class PatientService
     {
+        private SecurityService _securityService;
+        private UserService _userService;
         private SQLInterface _sqlservice;
         private bool formatJson;
-        private readonly ILogger<UserController> _logger;
 
-        public PatientService(ILogger<UserController> logger, bool format_json = true)
+        public PatientService(bool format_json = true)
         {
+            _securityService = new SecurityService();
+            _userService = new UserService();
             _sqlservice = new SQLInterface();
             formatJson = format_json;
-            _logger = logger;
         }
 
         public string GetPatientInfo(string userName)
         {
+            string patientJson = "{}";
+
             // Prepare filter field and value
             string fieldName = "Patient_Username";
             string filterValue = userName.ToLower();
 
             // Get Patient from SQL Service
-            PatientObject patient = _sqlservice.RetrievePatientsFiltered(fieldName, filterValue)[0];
+            List<PatientObject> patient = _sqlservice.RetrievePatientsFiltered(fieldName, filterValue);
 
-            // Get Patient's user data from SQL Service
-            UserObject temp = _sqlservice.RetrieveUsersFiltered("Username", filterValue)[0];
+            // If Patient was found, then
+            if (patient.Count > 0)
+            {
+                // Get Patient's user data from SQL Service
+                UserObject temp = _sqlservice.RetrieveUsersFiltered("Username", filterValue)[0];
 
-            // Merge Data
-            patient.Account_Type = temp.Account_Type;
-            patient.Name = temp.Name;
-            patient.Birth_Date = temp.Birth_Date;
-            patient.Gender = temp.Gender;
-            patient.Address = temp.Address;
-            patient.Phone_Number = temp.Phone_Number;
-            patient.Email_Address = temp.Email_Address;
-            patient.Emergency_Contact_Name = temp.Emergency_Contact_Name;
-            patient.Emergency_Contact_Number = temp.Emergency_Contact_Number;
-            patient.Date_Created = temp.Date_Created;
+                // Merge Data
+                patient[0] = patient[0] + temp;
 
-            // Convert Patient to JSON
-            string patientJson = JsonSerializer.Serialize<PatientObject>(patient, new JsonSerializerOptions() { WriteIndented = formatJson });
+                // Convert Patient to JSON
+                patientJson = JsonSerializer.Serialize<PatientObject>(patient[0], new JsonSerializerOptions() { WriteIndented = formatJson });
+            }
 
             return patientJson;
         }
@@ -57,28 +54,38 @@ namespace ABC_Hospital_Web_Service.Services
             // Get Patients from SQL Service
             List<PatientObject> patients = _sqlservice.RetrievePatientsFiltered(fieldName, filterValue);
 
-            foreach (PatientObject patient in patients)
+            // For each Patient
+            for(int i = 0; i < patients.Count; i++)
             {
-                // Get Patients' user data from SQL Service
-                UserObject temp = _sqlservice.RetrieveUsersFiltered("Username", patient.Username)[0];
+                // Get Patient's user data from SQL Service
+                UserObject temp = _sqlservice.RetrieveUsersFiltered("Username", patients[i].Username)[0];
 
                 // Merge Data
-                patient.Account_Type = temp.Account_Type;
-                patient.Name = temp.Name;
-                patient.Birth_Date = temp.Birth_Date;
-                patient.Gender = temp.Gender;
-                patient.Address = temp.Address;
-                patient.Phone_Number = temp.Phone_Number;
-                patient.Email_Address = temp.Email_Address;
-                patient.Emergency_Contact_Name = temp.Emergency_Contact_Name;
-                patient.Emergency_Contact_Number = temp.Emergency_Contact_Number;
-                patient.Date_Created = temp.Date_Created;
+                patients[i] = patients[0] + temp;
             }
 
             // Convert Patients to JSON
             string patientsJson = JsonSerializer.Serialize<List<PatientObject>>(patients, new JsonSerializerOptions() { WriteIndented = formatJson });
 
             return patientsJson;
+        }
+
+        public string CreatePatient(NewPatientObject patient)
+        {
+            // Generate Username for Patient
+            patient.Username = _userService.GenerateUsername(patient.Name);
+
+            // Create User record
+            _userService.CreateUser(patient);
+
+            // Store User Credentials
+            _securityService.SaveNewCredentials(patient.Username, patient.Password);
+
+            // Create Patient record
+            _sqlservice.CreatePatient(patient);
+
+            // Return Username so UI has access to it
+            return patient.Username;
         }
     }
 }
