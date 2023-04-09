@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace ABC_Hospital_Web_Service.Models
 {
@@ -61,6 +62,46 @@ namespace ABC_Hospital_Web_Service.Models
             }
 
             return false;
+        }
+
+        public void FormatPhoneNumbers()
+        {
+            if(Phone_Number.Length < 10 || Emergency_Contact_Number.Length < 10)
+            {
+                return;
+            }
+
+            if(Phone_Number.Length > 10)
+            {
+                Phone_Number = deformatPhoneNum(Phone_Number);
+            }
+            Phone_Number = formatPhoneNum(Phone_Number);
+
+            if (Emergency_Contact_Number.Length > 10)
+            {
+                Emergency_Contact_Number = deformatPhoneNum(Emergency_Contact_Number);
+            }
+            Emergency_Contact_Number = formatPhoneNum(Emergency_Contact_Number);
+
+        }
+
+        private string formatPhoneNum(string num)
+        {
+            num = num.Insert(6, "-");
+            num = num.Insert(3, ") ");
+            num = num.Insert(0, "(");
+            return num;
+        }
+
+        public void DeformatPhoneNumbers()
+        {
+            Phone_Number = Regex.Replace(Phone_Number, "[^.0-9]", "");
+            Emergency_Contact_Number = Regex.Replace(Emergency_Contact_Number, "[^.0-9]", "");
+        }
+
+        private string deformatPhoneNum(string num)
+        {
+            return Regex.Replace(num, "[^.0-9]", "");
         }
     }
 }

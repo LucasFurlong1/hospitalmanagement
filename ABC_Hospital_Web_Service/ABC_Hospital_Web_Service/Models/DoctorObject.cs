@@ -69,16 +69,7 @@ namespace ABC_Hospital_Web_Service.Models
                 && Doctor_Department.Equals(doc2.Doctor_Department)
                 && Is_On_Staff.Equals(doc2.Is_On_Staff)
                 && Doctorate_Degree.Equals(doc2.Doctorate_Degree)
-                && Username.Equals(doc2.Username)
-                && Account_Type.Equals(doc2.Account_Type)
-                && Name.Equals(doc2.Name)
-                && Birth_Date.Equals(doc2.Birth_Date)
-                && Gender.Equals(doc2.Gender)
-                && Address.Equals(doc2.Address)
-                && Phone_Number.Equals(doc2.Phone_Number)
-                && Emergency_Contact_Name.Equals(doc2.Emergency_Contact_Name)
-                && Emergency_Contact_Number.Equals(doc2.Emergency_Contact_Number)
-                && Date_Created.Equals(doc2.Date_Created))
+                && Username.Equals(doc2.Username))
             {
                 return true;
             }

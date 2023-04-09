@@ -318,7 +318,7 @@ namespace ABC_Hospital_Web_Service.Services
 
             if (RunNonQuerySQL(sqlString))
             {
-                List<PatientObject> temp = RetrievePatientsFiltered("Username", patient.Username);
+                List<PatientObject> temp = RetrievePatientsFiltered("Patient_Username", patient.Username);
                 if (temp.Count > 0 && temp[0].Equals(patient))
                 {
                     return true;
@@ -402,7 +402,7 @@ namespace ABC_Hospital_Web_Service.Services
 
             if (RunNonQuerySQL(sqlString))
             {
-                List<DoctorObject> temp = RetrieveDoctorsFiltered("Username", doctor.Username);
+                List<DoctorObject> temp = RetrieveDoctorsFiltered("Doctor_Username", doctor.Username);
                 if (temp.Count > 0 && temp[0].Equals(doctor))
                 {
                     return true;

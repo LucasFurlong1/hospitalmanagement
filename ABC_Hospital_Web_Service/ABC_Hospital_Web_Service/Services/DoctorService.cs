@@ -32,12 +32,12 @@ namespace ABC_Hospital_Web_Service.Services
             {
                 // Get Doctor's user data from SQL Service
                 UserObject temp = _sqlservice.RetrieveUsersFiltered("Username", filterValue)[0];
+                temp.FormatPhoneNumbers();
 
                 // Merge Data
                 doctor[0] = doctor[0] + temp;
-
-                
             }
+
             // Convert Doctor to JSON
             string doctorJson = JsonSerializer.Serialize<List<DoctorObject>>(doctor, new JsonSerializerOptions() { WriteIndented = formatJson });
 
@@ -54,6 +54,7 @@ namespace ABC_Hospital_Web_Service.Services
             {
                 // Get Doctor's user data from SQL Service
                 UserObject temp = _sqlservice.RetrieveUsersFiltered("Username", doctors[i].Username)[0];
+                temp.FormatPhoneNumbers();
 
                 // Merge Data
                 doctors[i] = doctors[i] + temp;

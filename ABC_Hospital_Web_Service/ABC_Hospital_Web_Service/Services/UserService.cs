@@ -24,6 +24,11 @@ namespace ABC_Hospital_Web_Service.Services
             // Get Users from SQL Service
             List<UserObject> users = _sqlservice.RetrieveUsers();
 
+            foreach(UserObject user in users)
+            {
+                user.FormatPhoneNumbers();
+            }
+
             // Convert Users to JSON
             string usersJson = JsonSerializer.Serialize<List<UserObject>>(users, new JsonSerializerOptions() { WriteIndented = formatJson });
 
@@ -39,6 +44,11 @@ namespace ABC_Hospital_Web_Service.Services
             // Get Users from SQL Service
             List<UserObject> users = _sqlservice.RetrieveUsersFiltered(fieldName, filterValue);
 
+            foreach(UserObject user in users)
+            {
+                user.FormatPhoneNumbers();
+            }
+
             // Convert Users to JSON
             string usersJson = JsonSerializer.Serialize<List<UserObject>>(users, new JsonSerializerOptions() { WriteIndented = formatJson });
 
@@ -52,16 +62,22 @@ namespace ABC_Hospital_Web_Service.Services
             string filterValue = userName.ToLower();
 
             // Get Users from SQL Service
-            List<UserObject> user = _sqlservice.RetrieveUsersFiltered(fieldName, filterValue);
+            List<UserObject> users = _sqlservice.RetrieveUsersFiltered(fieldName, filterValue);
+
+            foreach (UserObject user in users)
+            {
+                user.FormatPhoneNumbers();
+            }
 
             // Convert Users to JSON
-            string userJson = JsonSerializer.Serialize<List<UserObject>>(user, new JsonSerializerOptions() { WriteIndented = formatJson });
+            string userJson = JsonSerializer.Serialize<List<UserObject>>(users, new JsonSerializerOptions() { WriteIndented = formatJson });
 
             return userJson;
         }
 
         public bool CreateUser(UserObject user)
         {
+            user.DeformatPhoneNumbers();
             return _sqlservice.CreateUser(user);
         }
 

@@ -32,6 +32,7 @@ namespace ABC_Hospital_Web_Service.Services
             {
                 // Get Patient's user data from SQL Service
                 UserObject temp = _sqlservice.RetrieveUsersFiltered("Username", filterValue)[0];
+                temp.FormatPhoneNumbers();
 
                 // Merge Data
                 patient[0] = patient[0] + temp;
@@ -56,6 +57,7 @@ namespace ABC_Hospital_Web_Service.Services
             {
                 // Get Patient's user data from SQL Service
                 UserObject temp = _sqlservice.RetrieveUsersFiltered("Username", patients[i].Username)[0];
+                temp.FormatPhoneNumbers();
 
                 // Merge Data
                 patients[i] = patients[i] + temp;

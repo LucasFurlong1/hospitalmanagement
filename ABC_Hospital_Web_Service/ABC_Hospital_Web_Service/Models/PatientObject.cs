@@ -60,18 +60,9 @@ namespace ABC_Hospital_Web_Service.Models
         {
             PatientObject patient2 = obj as PatientObject ?? new PatientObject();
             if (patient2 != null
-                && Doctor_Username.Equals(patient2.Doctor_Username)
-                && Last_Interacted.Equals(patient2.Last_Interacted)
                 && Username.Equals(patient2.Username)
-                && Account_Type.Equals(patient2.Account_Type)
-                && Name.Equals(patient2.Name)
-                && Birth_Date.Equals(patient2.Birth_Date)
-                && Gender.Equals(patient2.Gender)
-                && Address.Equals(patient2.Address)
-                && Phone_Number.Equals(patient2.Phone_Number)
-                && Emergency_Contact_Name.Equals(patient2.Emergency_Contact_Name)
-                && Emergency_Contact_Number.Equals(patient2.Emergency_Contact_Number)
-                && Date_Created.Equals(patient2.Date_Created))
+                && Doctor_Username.Equals(patient2.Doctor_Username)
+                && Last_Interacted.Equals(patient2.Last_Interacted))
             {
                 return true;
             }
