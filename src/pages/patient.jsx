@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import SideNavBar from "./sidenav";
+import { UNSAFE_useScrollRestoration, useLocation } from "react-router-dom";
+import SideNavBar from "./sidenavpat";
 import 'react-chatbot-kit/build/main.css'
 import "../App.css"
 import "../patform.css"
@@ -9,12 +10,15 @@ import MessageParser from "../MessageParser";
 import config from "../chatConfig";
 
 export const Patient = () => {
-
+    const location = useLocation()
+    const [doctor, setDoctor] = useState([])
 
     useEffect(() => {
-        fetch("https://localhost:44304/api/User/GetUsers"
-          ).then(response => response.json()).then((response) => {
+        fetch(`https://localhost:44304/api/Patient/GetPatientInfo?patientUsername=${location.state.username}`).then(response => response.json()).then((response) => {
             console.log(response)
+            fetch().then(response => response.json()).then((response => {
+                
+            }))
         })
     },[])
 

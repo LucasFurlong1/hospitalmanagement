@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '@trendmicro/react-sidenav/dist/react-sidenav.css';
 
 
-const SideNavBar = () => {
+const SideNavBarDoc = () => {
     const navigate = useNavigate()
     return (
         <SideNav className="side_nav" onSelect={(selected) => {navigate('/'+selected)}}>
@@ -22,4 +22,4 @@ const SideNavBar = () => {
     )
 }
 
-export default SideNavBar;
+export default SideNavBarDoc;

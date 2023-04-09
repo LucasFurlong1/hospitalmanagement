@@ -7,16 +7,20 @@ import { Doctor } from "./doctor";
 import { Patient } from "./patient";
 import { DocDiag } from "./docdiag"
 import { DocPres } from "./docpres"
+import { PatientInfo } from "./patientInfo"
 
-const App = () => {
+const App = (props) => {
+
+
 
   return (
       <div className="App">
         <Routes>
           <Route path="/" element={<Login/>}/>
-          <Route path="/doctor" element={<Doctor/>} />
+          <Route path="/doctor" element={<Doctor/>}/>
           <Route path="/register" element={<Register/>} />
           <Route path="/patient" element={<Patient/>} />
+          <Route path="/patient-info" element={<PatientInfo/>}/>
           <Route path="/docdiag" element={<DocDiag/>} />
           <Route path="/docpres" element={<DocPres/>} />
         </Routes>
