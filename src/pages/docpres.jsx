@@ -17,8 +17,11 @@ export const DocPres = () => {
     const [filled, setFilled] = useState(false)
 
     useEffect(() => {
-        fetch(`https://localhost:44304/api/Patient/GetPatientsByDoctor?doctorUsername=${location.state.username}`).then(response => response.json()).then((response) => {
+        fetch(`https://localhost:44304/api/Patient/GetPatientsByDoctor?doctorUsername=${location.state.username}`).then(response => response.json()).then((response) => {    
             setPatients(response)
+            console.log(response[0].Username)
+            patientName = response[0].Username
+            getPrescriptions(patientName)
         })
     }, [])
 
@@ -76,9 +79,9 @@ export const DocPres = () => {
         }
     }
 
-    const handleUpdate = async () => {
+    const handleUpdate = () => {
         if(id !== "") {
-            await fetch(`https://localhost:44304/api/Prescription/UpdatePrescription`, {
+            fetch(`https://localhost:44304/api/Prescription/UpdatePrescription`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -95,18 +98,17 @@ export const DocPres = () => {
                 },
                 )
             }).then(response => response.json()).then((response) => {
-                console.log(response)
                 if(response===true){
-                    alert("test")
+                    alert("Update success!")
                 }
                 else{
-                    alert("update failure!")
+                    alert("Update failure!")
                 }
             })
         }
         else{
-            console.log("test")
-            await fetch(`https://localhost:44304/api/Prescription/CreatePrescription`, {
+            console.log(patientName)
+            fetch(`https://localhost:44304/api/Prescription/CreatePrescription`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -122,15 +124,40 @@ export const DocPres = () => {
                     "is_Filled": filled
                 },
                 )
-            }).then(response => response.json()).then((response) => {
-                console.log(response)
-                if(response===true){
-                    alert("test")
+            }).then(() => {
+                alert("Success!")
+                getPrescriptions(patientName)
+                setMedName("")
+                setDosage("")
+                setInstructions("")
+                setDate("1900-01-01")
+                setFilled(false)
+            }).catch((error) => {
+                console.log(error)
+                alert(error)
+            })
+        }
+    }
+
+    const handleDelete = () => {
+        if(id !== "") {
+            fetch(`https://localhost:44304/api/Prescription/DeletePrescription?prescription_ID=${id}`, {
+                method: 'DELETE'
+            }).then((response) => {
+            console.log(response.ok)    
+            if(response.ok===true){
+                    alert("Delete pass!")
+                    let element = document.getElementById('pres')
+                    element.value = "New"
+                    getPrescriptions(patientName)
                 }
                 else{
-                    alert("update failure!")
+                    alert("Delete failure!")
                 }
             })
+        }
+        else{
+            alert("Impossible to delete!")
         }
     }
 
@@ -147,7 +174,7 @@ export const DocPres = () => {
                         })}
                     </select>
                     <label>Select prescription: </label>
-                    <select onChange={(e) => {populateData(e.target.value)}}>
+                    <select id="pres" onChange={(e) => {populateData(e.target.value)}}>
                         <option value="New">Create New</option>
                         {prescriptions.map((data) => {
                             return (
@@ -158,20 +185,20 @@ export const DocPres = () => {
                 </div>
                 <div className='pres-2'>
                         <label>Medication Name: </label>
-                        <input value={medName} onChange={(e) => {setMedName(e.target.value)}}/>
+                        <input className='pres-2-input' value={medName} onChange={(e) => {setMedName(e.target.value)}}/>
                         <label>Dosage: </label>
-                        <input value={dosage} onChange={(e) => {setDosage(e.target.value)}}/>
+                        <input className='pres-2-input' value={dosage} onChange={(e) => {setDosage(e.target.value)}}/>
                         <label>Date: </label>
-                        <input type="date" value={date} onChange={(e) => {setDate(e.target.value)}}/>
+                        <input className='pres-2-input' type="date" value={date} onChange={(e) => {setDate(e.target.value)}}/>
                     </div>
                     <div className='pres-3'>
                         <label>Instructions: </label>
                         <textarea className='pres-long' value={instructions} onChange={(e) => {setInstructions(e.target.value)}}/>
                         <label>Filled?: </label>
-                        <input type="checkbox" checked={filled} onChange={(e) => {handleCheck(e)}}></input>
+                        <input type="checkbox" checked={filled} onChange={(e) => {handleCheck(e)}}/>
                 </div>
                 <button type="button" className='pres-update' onClick={() => {handleUpdate()}}>Update/Create</button>
-                <button type="button" className='pres-delete'>Delete</button>
+                <button type="button" className='pres-delete' onClick={() => {handleDelete()}}>Delete</button>
             </form>
         </div>
     )

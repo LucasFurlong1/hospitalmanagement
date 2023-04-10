@@ -51,6 +51,7 @@
     width: 500px;
     resize: none;
     margin: 0.5rem;
+    border-radius: 5px;
 }
 
 .pres-update {
@@ -61,4 +62,9 @@
 .pres-delete {
     padding: 1rem;
     margin: 1rem;
+}
+
+.pres-2-input {
+    border-radius: 5px;
+    border: none;
 }

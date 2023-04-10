@@ -36,7 +36,7 @@ export const Patient = () => {
                         <div className="doctor-info-main-container">
                             <div className="doc-info-1">
                                 <label className="doc-info-title">Name: </label>
-                                <p>{data.Name}</p>
+                                <p>{data.Name} {data.Doctorate_Degree}</p>
                             </div>
                             <div className="doc-info-2">
                                 <div className="doc-info-bottom-1">
