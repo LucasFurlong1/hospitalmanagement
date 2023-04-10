@@ -26,6 +26,9 @@ export const Login = (props) => {
                     else if(res[0].Account_Type === "P"){
                         navigate("/patient", {state: {username}})
                     }
+                    else if(res[0].Account_Type === "A"){
+                        
+                    }
                 })
             }
             else {

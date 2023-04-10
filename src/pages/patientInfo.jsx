@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom';
-import "../patinfo.css"
+import "../CSS/patinfo.css"
 
 export const PatientInfo = () => {
 

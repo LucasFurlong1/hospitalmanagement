@@ -1,6 +1,6 @@
 import React from 'react'
 
-import "./botavatar.css"
+import "./CSS/botavatar.css"
 
 const BotAvatar = () => {
     return ( 

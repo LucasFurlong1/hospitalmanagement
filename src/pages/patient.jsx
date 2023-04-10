@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import SideNavBar from "./sidenavpat";
 import 'react-chatbot-kit/build/main.css'
-import "../App.css"
-import "../patform.css"
+import "../CSS/patform.css"
 import Chatbot from "react-chatbot-kit";
 import ActionProvider from '../ActionProvider';
 import MessageParser from "../MessageParser";

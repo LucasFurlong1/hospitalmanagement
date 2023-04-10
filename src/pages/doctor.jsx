@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react"
 import SideNavBar from "./sidenavdoc"
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import "../docform.css"
+import "../CSS/docform.css"
+
+let newPatients = []
 
 export const Doctor = () => {
     const [patient, setPatient] = useState([]);
@@ -13,9 +15,9 @@ export const Doctor = () => {
     }, [])
 
     const patients = async () => {
-        fetch(`https://localhost:44304/api/Patient/GetPatientsByDoctor?doctorUsername=${location.state.username}`).then(response => response.json()).then((response) => {
-            console.log(response)
+        await fetch(`https://localhost:44304/api/Patient/GetPatientsByDoctor?doctorUsername=${location.state.username}`).then(response => response.json()).then((response) => {
             setPatient(response)
+            console.log(response)
         })
     }
 
@@ -44,7 +46,7 @@ export const Doctor = () => {
                                 <div className="pat-block-2">
                                     <div className="pat-block-middle-top-1">
                                         <label className="label-title">Gender: </label>
-                                        <p>{data.Gender}</p>
+                                        {data.Gender === "M" ? <p>Male</p> : data.Gender === "F" ? <p>Female</p> : data.Gender === "T" ? <p>Transgender</p> : data.Gender === "N" ? <p>Non-binary</p> : data.Gender === "O" ? <p>Other - more specific</p> : <p>Prefer not to answer</p>}
                                     </div>
                                     <div className="pat-block-middle-top-2">
                                         <label className="label-title">Email: </label>

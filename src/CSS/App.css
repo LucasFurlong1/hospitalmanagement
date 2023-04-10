@@ -8,6 +8,7 @@ html {
   justify-content: center;
   align-items: center;
   text-align: center;
+  font-family: monospace;
 }
 
 .full-container {
@@ -18,16 +19,15 @@ html {
   justify-content: center;
 }
 
-.auth-form-container, .login-form, .register-form {
+.auth-form-container, .login-form {
   display: flex;
   flex-direction: column;
-  font-family: 'Arial Narrow', Arial, sans-serif;
   font-weight: bold;
 }
 
 .auth-form-container {
   padding: 5rem;
-  border: 1px solid white;
+  border: 3px solid white;
   border-radius: 10px;
   margin: 0.5rem;
 }
@@ -76,7 +76,6 @@ button:active {
 }
 
 .auth-title{
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   color: #38302E;
 }
 

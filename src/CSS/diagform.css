@@ -7,7 +7,6 @@
     align-items: center;
     text-align: center;
     flex-wrap: wrap;
-    font-family: 'Arial Narrow', Arial, sans-serif;
     font-weight: bold;
 }
 
@@ -68,7 +67,6 @@
   }
 
   button {
-    font-family: 'Arial Narrow', Arial, sans-serif;
     font-weight: bold;
   }
 

@@ -1,0 +1,104 @@
+.register-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+}
+
+.reg-form-container {
+    display: flex;
+    flex-direction: column;
+    border: 3px solid white;
+    border-radius: 10px;
+    margin: 0.5rem;
+}
+
+.reg-title{
+    color: #38302E;
+}
+
+.register-button {
+    border-radius: 5px;
+    border: none;
+    padding-bottom: 0.5rem;
+    padding-top: 0.5rem;
+    width: 60%;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+}
+
+.pat-reg-1, .pat-reg-2, .pat-reg-3, .pat-reg-4, .pat-reg-5, .pat-reg-1-1, .pat-reg-1-2, .pat-reg-1-3, .pat-reg-2-1, .pat-reg-2-2, .pat-reg-3-1, .pat-reg-3-2, .pat-reg-4-1, .pat-reg-4-2, .pat-reg-5-1, .pat-reg-5-2 {
+    display: flex;
+    padding-bottom: 1rem;
+}
+
+.pat-reg-1-1, .pat-reg-1-2, .pat-reg-1-3, .pat-reg-2-1, .pat-reg-2-2, .pat-reg-3-1, .pat-reg-3-2, .pat-reg-4-1, .pat-reg-4-2, .pat-reg-5-1, .pat-reg-5-2 {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-right: 2rem;
+    margin-left: 1rem;
+}
+
+.pat-reg-1, .pat-reg-2, .pat-reg-3, .pat-reg-4 {
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.pat-reg-4 {
+    border-bottom: 3px solid white;
+    
+}
+
+.pat-reg-2-2, .pat-reg-3-2, .pat-reg-4-2 {
+    margin-left: 5rem;
+}
+
+.pat-reg-5 {
+    margin-top: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    border-bottom: 3px solid white;
+}
+
+.pat-reg-5-1, .pat-reg-5-2 {
+    width: 100%;
+}
+
+.e-input {
+    width: 95%;
+    border-radius: 5px;
+    border: none;
+    height: 25px;
+}
+
+.pat-reg-select {
+    margin: 0;
+    padding: 1px 2px 1px 2px;
+    font-family: monospace;
+    width: 307px;
+    height: 27px;
+}
+
+.pat-reg-label {
+    font-weight: bold;
+    font-size: large;
+}
+
+.pat-reg-input {
+    width: 300px;
+    height: 25px;
+    border-radius: 5px;
+    border: none;
+}
+
+.reg-address {
+    resize: none;
+    width: 300px;
+    border-radius: 5px;
+    height: 75px;
+}
+
