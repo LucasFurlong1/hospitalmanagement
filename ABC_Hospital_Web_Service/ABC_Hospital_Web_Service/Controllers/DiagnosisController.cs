@@ -36,12 +36,12 @@ namespace ABC_Hospital_Web_Service.Controllers
             return _diagnosisService.CreateDiagnosis(diagnosis);
         }
         [HttpPut("UpdateDiagnosis")]
-        public bool UpdateDiagnosis(DiagnosisObject diagnosis)
+        public ActionResult<string> UpdateDiagnosis(DiagnosisObject diagnosis)
         {
             return _diagnosisService.UpdateDiagnosis(diagnosis);
         }
         [HttpDelete("DeleteDiagnosis")]
-        public bool DeleteDiagnosis(string diagnosis_ID)
+        public ActionResult<string> DeleteDiagnosis(string diagnosis_ID)
         {
             return _diagnosisService.DeleteDiagnosis(diagnosis_ID);
         }

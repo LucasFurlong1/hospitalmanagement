@@ -6,6 +6,7 @@ namespace ABC_Hospital_Web_Service.Services
 {
     /* To Do:
      * Check all updates and creates sqls for single quotes in field values
+     * Find cause of error at DataBaseConnection.Open();
      */
     public class SQLInterface
     {

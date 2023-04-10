@@ -9,12 +9,14 @@ namespace ABC_Hospital_Web_Service.Services
         private readonly IConfiguration _appConfig;
         private SQLInterface _sqlservice;
         private bool formatJson;
+        private JsonSerializerOptions _jsonOptions;
 
         public SecurityService(IConfiguration appConfig, bool format_json = true)
         {
             _appConfig = appConfig;
             _sqlservice = new SQLInterface(appConfig);
             formatJson = format_json;
+            _jsonOptions = new JsonSerializerOptions() { WriteIndented = formatJson };
         }
 
         public string GetChatBotConnectionData()
@@ -24,7 +26,7 @@ namespace ABC_Hospital_Web_Service.Services
             chatApiConfig[0].Key = _appConfig.GetValue<string>("AppSettings:ChatApi:Key");
             chatApiConfig[0].Token = _appConfig.GetValue<string>("AppSettings:ChatApi:Token");
 
-            string json = JsonSerializer.Serialize<List<KeyTokenPair>>(chatApiConfig, new JsonSerializerOptions() { WriteIndented = formatJson });
+            string json = JsonSerializer.Serialize<List<KeyTokenPair>>(chatApiConfig, _jsonOptions);
 
             return json;
         }
@@ -59,7 +61,7 @@ namespace ABC_Hospital_Web_Service.Services
 
             session.Add(_sqlservice.RetrieveUserIdentitySession(username));
 
-            string sessionJson = JsonSerializer.Serialize<List<UserSessionObject>>(session, new JsonSerializerOptions() { WriteIndented = formatJson });
+            string sessionJson = JsonSerializer.Serialize<List<UserSessionObject>>(session, _jsonOptions);
             return sessionJson;
         }
 

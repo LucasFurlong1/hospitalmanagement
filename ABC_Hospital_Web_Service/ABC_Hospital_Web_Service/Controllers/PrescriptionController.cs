@@ -36,12 +36,12 @@ namespace ABC_Hospital_Web_Service.Controllers
             return _prescriptionService.CreatePrescription(prescription);
         }
         [HttpPut("UpdatePrescription")]
-        public bool UpdatePrescription(PrescriptionObject prescription)
+        public ActionResult<string> UpdatePrescription(PrescriptionObject prescription)
         {
             return _prescriptionService.UpdatePrescription(prescription);
         }
         [HttpDelete("DeletePrescription")]
-        public bool DeletePrescription(string prescription_ID)
+        public ActionResult<string> DeletePrescription(string prescription_ID)
         {
             return _prescriptionService.DeletePrescription(prescription_ID);
         }

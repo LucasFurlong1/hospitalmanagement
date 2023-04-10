@@ -12,11 +12,13 @@ namespace ABC_Hospital_Web_Service.Services
     {
         private SQLInterface _sqlservice;
         private bool formatJson;
+        private JsonSerializerOptions _jsonOptions;
 
         public UserService(IConfiguration appConfig, bool format_json = true)
         {
             _sqlservice = new SQLInterface(appConfig);
             formatJson = format_json;
+            _jsonOptions = new JsonSerializerOptions() { WriteIndented = formatJson };
         }
 
         public string GetUsers()
@@ -30,7 +32,7 @@ namespace ABC_Hospital_Web_Service.Services
             }
 
             // Convert Users to JSON
-            string usersJson = JsonSerializer.Serialize<List<UserObject>>(users, new JsonSerializerOptions() { WriteIndented = formatJson });
+            string usersJson = JsonSerializer.Serialize<List<UserObject>>(users, _jsonOptions);
 
             return usersJson;
         }
@@ -50,7 +52,7 @@ namespace ABC_Hospital_Web_Service.Services
             }
 
             // Convert Users to JSON
-            string usersJson = JsonSerializer.Serialize<List<UserObject>>(users, new JsonSerializerOptions() { WriteIndented = formatJson });
+            string usersJson = JsonSerializer.Serialize<List<UserObject>>(users, _jsonOptions);
 
             return usersJson;
         }
@@ -70,7 +72,7 @@ namespace ABC_Hospital_Web_Service.Services
             }
 
             // Convert Users to JSON
-            string userJson = JsonSerializer.Serialize<List<UserObject>>(users, new JsonSerializerOptions() { WriteIndented = formatJson });
+            string userJson = JsonSerializer.Serialize<List<UserObject>>(users, _jsonOptions);
 
             return userJson;
         }

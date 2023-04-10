@@ -9,6 +9,7 @@ namespace ABC_Hospital_Web_Service.Services
         private UserService _userService;
         private SQLInterface _sqlservice;
         private bool formatJson;
+        private JsonSerializerOptions _jsonOptions;
 
         public DoctorService(IConfiguration appConfig, bool format_json = true)
         {
@@ -16,6 +17,7 @@ namespace ABC_Hospital_Web_Service.Services
             _userService = new UserService(appConfig);
             _sqlservice = new SQLInterface(appConfig);
             formatJson = format_json;
+            _jsonOptions = new JsonSerializerOptions() { WriteIndented = formatJson };
         }
 
         public string GetDoctorInfo(string userName)
@@ -39,7 +41,7 @@ namespace ABC_Hospital_Web_Service.Services
             }
 
             // Convert Doctor to JSON
-            string doctorJson = JsonSerializer.Serialize<List<DoctorObject>>(doctor, new JsonSerializerOptions() { WriteIndented = formatJson });
+            string doctorJson = JsonSerializer.Serialize<List<DoctorObject>>(doctor, _jsonOptions);
 
             return doctorJson;
         }
@@ -61,13 +63,15 @@ namespace ABC_Hospital_Web_Service.Services
             }
 
             // Convert Doctors to JSON
-            string doctorJson = JsonSerializer.Serialize<List<DoctorObject>>(doctors, new JsonSerializerOptions() { WriteIndented = formatJson });
+            string doctorJson = JsonSerializer.Serialize<List<DoctorObject>>(doctors, _jsonOptions);
 
             return doctorJson;
         }
 
         public string CreateDoctor(NewDoctorObject doctor)
         {
+            List<ReturnStringObject> username = new List<ReturnStringObject>();
+
             // Format DateTimes
             doctor.Date_Created = DateTime.Parse(doctor.Date_Created).ToString("yyyy-MM-dd");
             doctor.Birth_Date = DateTime.Parse(doctor.Birth_Date).ToString("yyyy-MM-dd");
@@ -75,30 +79,32 @@ namespace ABC_Hospital_Web_Service.Services
             // Generate Username for Doctor
             doctor.Username = _userService.GenerateUsername(doctor.Name);
 
+            // Save Username
+            username.Add(new ReturnStringObject(doctor.Username));
+
             // Create User record
-            if(!_userService.CreateUser(doctor))
+            if (!_userService.CreateUser(doctor))
             {
-                // If the create failed, return empty string to notify UI
-                return "";
+                // If the create failed, replace ID with empty string to notify UI there was an error
+                username[0].str = "";
             }
 
             // Store User Credentials
             if(!_securityService.SaveNewCredentials(doctor.Username, doctor.Password))
             {
-                // If the save failed, return empty string to notify UI
-                return "";
+                // If the create failed, replace ID with empty string to notify UI there was an error
+                username[0].str = "";
             }
-
 
             // Create Doctor record
             if (!_sqlservice.CreateDoctor(doctor))
             {
-                // If the create failed, return empty string to notify UI
-                return "";
+                // If the create failed, replace ID with empty string to notify UI there was an error
+                username[0].str = "";
             }
 
             // Return Username so UI has access to it
-            return doctor.Username;
+            return JsonSerializer.Serialize<List<ReturnStringObject>>(username, _jsonOptions);
         }
     }
 }

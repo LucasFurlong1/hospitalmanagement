@@ -7,11 +7,13 @@ namespace ABC_Hospital_Web_Service.Services
     {
         private SQLInterface _sqlservice;
         private bool formatJson;
+        private JsonSerializerOptions _jsonOptions;
 
         public PrescriptionService(IConfiguration appConfig, bool format_json = true)
         {
             _sqlservice = new SQLInterface(appConfig);
             formatJson = format_json;
+            _jsonOptions = new JsonSerializerOptions() { WriteIndented = formatJson };
         }
 
         public string GetPrescriptions()
@@ -20,7 +22,7 @@ namespace ABC_Hospital_Web_Service.Services
             List<PrescriptionObject> prescriptions = _sqlservice.RetrievePrescriptions();
 
             // Convert Prescriptions to JSON
-            string prescriptionJson = JsonSerializer.Serialize<List<PrescriptionObject>>(prescriptions, new JsonSerializerOptions() { WriteIndented = formatJson });
+            string prescriptionJson = JsonSerializer.Serialize<List<PrescriptionObject>>(prescriptions, _jsonOptions);
 
             return prescriptionJson;
         }
@@ -35,7 +37,7 @@ namespace ABC_Hospital_Web_Service.Services
             List<PrescriptionObject> prescription = _sqlservice.RetrievePrescriptionsFiltered(fieldName, filterValue);
 
             // Convert Prescription to JSON
-            string prescriptionJson = JsonSerializer.Serialize<List<PrescriptionObject>>(prescription, new JsonSerializerOptions() { WriteIndented = formatJson });
+            string prescriptionJson = JsonSerializer.Serialize<List<PrescriptionObject>>(prescription, _jsonOptions);
 
             return prescriptionJson;
         }
@@ -50,41 +52,52 @@ namespace ABC_Hospital_Web_Service.Services
             List<PrescriptionObject> prescriptions = _sqlservice.RetrievePrescriptionsFiltered(fieldName, filterValue);
 
             // Convert Prescriptions to JSON
-            string prescriptionJson = JsonSerializer.Serialize<List<PrescriptionObject>>(prescriptions, new JsonSerializerOptions() { WriteIndented = formatJson });
+            string prescriptionJson = JsonSerializer.Serialize<List<PrescriptionObject>>(prescriptions, _jsonOptions);
 
             return prescriptionJson;
         }
 
         public string CreatePrescription(PrescriptionObject prescription)
         {
+            List<ReturnStringObject> id = new List<ReturnStringObject>();
+
             // Format DateTimes
             prescription.Prescribed_Date = DateTime.Parse(prescription.Prescribed_Date).ToString("yyyy-MM-dd");
 
             // Generate ID for Prescription
             prescription.Prescription_ID = Guid.NewGuid().ToString();
 
+            // Save Prescription's ID
+            id.Add(new ReturnStringObject(prescription.Prescription_ID));
+
             // Create new Prescription
             if (!_sqlservice.CreatePrescription(prescription))
             {
-                // If the create failed, return empty string to notify UI
-                return "";
+                // If the create failed, replace ID with "" to notify UI there was an error
+                id[0].str = "";
             }
 
-            // Return Prescription's ID so UI has access to it
-            return prescription.Prescription_ID;
+            // Return Prescription's ID or Empty so UI has access to it
+            return JsonSerializer.Serialize<List<ReturnStringObject>>(id, _jsonOptions);
         }
 
-        public bool UpdatePrescription(PrescriptionObject prescription)
+        public string UpdatePrescription(PrescriptionObject prescription)
         {
+            List<ReturnBoolObject> success = new List<ReturnBoolObject>();
+
             // Format DateTimes
             prescription.Prescribed_Date = DateTime.Parse(prescription.Prescribed_Date).ToString("yyyy-MM-dd");
 
-            return _sqlservice.UpdatePrescription(prescription);
+            success.Add(new ReturnBoolObject(_sqlservice.UpdatePrescription(prescription)));
+            return JsonSerializer.Serialize<List<ReturnBoolObject>>(success, _jsonOptions);
         }
 
-        public bool DeletePrescription(string prescription_ID)
+        public string DeletePrescription(string prescription_ID)
         {
-            return _sqlservice.DeletePrescription(prescription_ID);
+            List<ReturnBoolObject> success = new List<ReturnBoolObject>();
+
+            success.Add(new ReturnBoolObject(_sqlservice.DeletePrescription(prescription_ID)));
+            return JsonSerializer.Serialize<List<ReturnBoolObject>>(success, _jsonOptions);
         }
     }
 }

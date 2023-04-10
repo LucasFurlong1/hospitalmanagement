@@ -7,11 +7,13 @@ namespace ABC_Hospital_Web_Service.Services
     {
         private SQLInterface _sqlservice;
         private bool formatJson;
+        private JsonSerializerOptions _jsonOptions;
 
         public DiagnosisService(IConfiguration appConfig, bool format_json = true)
         {
             _sqlservice = new SQLInterface(appConfig);
             formatJson = format_json;
+            _jsonOptions = new JsonSerializerOptions() { WriteIndented = formatJson };
         }
 
         public string GetDiagnoses()
@@ -20,7 +22,7 @@ namespace ABC_Hospital_Web_Service.Services
             List<DiagnosisObject> diagnoses = _sqlservice.RetrieveDiagnoses();
 
             // Convert Diagnoses to JSON
-            string diagnosesJson = JsonSerializer.Serialize<List<DiagnosisObject>>(diagnoses, new JsonSerializerOptions() { WriteIndented = formatJson });
+            string diagnosesJson = JsonSerializer.Serialize<List<DiagnosisObject>>(diagnoses, _jsonOptions);
 
             return diagnosesJson;
         }
@@ -35,7 +37,7 @@ namespace ABC_Hospital_Web_Service.Services
             List<DiagnosisObject> diagnosis = _sqlservice.RetrieveDiagnosesFiltered(fieldName, filterValue);
 
             // Convert Diagnosis to JSON
-            string diagnosisJson = JsonSerializer.Serialize<List<DiagnosisObject>>(diagnosis, new JsonSerializerOptions() { WriteIndented = formatJson });
+            string diagnosisJson = JsonSerializer.Serialize<List<DiagnosisObject>>(diagnosis, _jsonOptions);
 
             return diagnosisJson;
         }
@@ -50,13 +52,15 @@ namespace ABC_Hospital_Web_Service.Services
             List<DiagnosisObject> diagnoses = _sqlservice.RetrieveDiagnosesFiltered(fieldName, filterValue);
 
             // Convert Diagnoses to JSON
-            string diagnosesJson = JsonSerializer.Serialize<List<DiagnosisObject>>(diagnoses, new JsonSerializerOptions() { WriteIndented = formatJson });
+            string diagnosesJson = JsonSerializer.Serialize<List<DiagnosisObject>>(diagnoses, _jsonOptions);
 
             return diagnosesJson;
         }
 
         public string CreateDiagnosis(DiagnosisObject diagnosis)
         {
+            List<ReturnStringObject> id = new List<ReturnStringObject>();
+
             // Format DateTimes
             diagnosis.Diagnosis_Date = DateTime.Parse(diagnosis.Diagnosis_Date).ToString("yyyy-MM-dd");
 
@@ -67,24 +71,34 @@ namespace ABC_Hospital_Web_Service.Services
             if(!_sqlservice.CreateDiagnosis(diagnosis))
             {
                 // If the create failed, return empty string to notify UI
-                return "";
+                id.Add(new ReturnStringObject(""));
+            }
+            else
+            {
+                id.Add(new ReturnStringObject(diagnosis.Diagnosis_ID));
             }
 
             // Return Diagnosis's ID so UI has access to it
-            return diagnosis.Diagnosis_ID;
+            return JsonSerializer.Serialize<List<ReturnStringObject>>(id, _jsonOptions);
         }
 
-        public bool UpdateDiagnosis(DiagnosisObject diagnosis)
+        public string UpdateDiagnosis(DiagnosisObject diagnosis)
         {
+            List<ReturnBoolObject> success = new List<ReturnBoolObject>();
+
             // Format DateTimes
             diagnosis.Diagnosis_Date = DateTime.Parse(diagnosis.Diagnosis_Date).ToString("yyyy-MM-dd");
 
-            return _sqlservice.UpdateDiagnosis(diagnosis);
+            success.Add(new ReturnBoolObject(_sqlservice.UpdateDiagnosis(diagnosis)));
+            return JsonSerializer.Serialize<List<ReturnBoolObject>>(success, _jsonOptions);
         }
 
-        public bool DeleteDiagnosis(string diagnosis_ID)
+        public string DeleteDiagnosis(string diagnosis_ID)
         {
-            return _sqlservice.DeleteDiagnosis(diagnosis_ID);
+            List<ReturnBoolObject> success = new List<ReturnBoolObject>();
+
+            success.Add(new ReturnBoolObject(_sqlservice.DeleteDiagnosis(diagnosis_ID)));
+            return JsonSerializer.Serialize<List<ReturnBoolObject>>(success, _jsonOptions);
         }
     }
 }
