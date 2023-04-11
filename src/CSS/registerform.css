@@ -102,3 +102,65 @@
     height: 75px;
 }
 
+.doc-reg-1, .doc-reg-2, .doc-reg-3, .doc-reg-4, .doc-reg-5, .doc-reg-6, .doc-reg-1-1, .doc-reg-1-2, .doc-reg-1-3, .doc-reg-2-1, .doc-reg-2-2, .doc-reg-3-1, .doc-reg-3-2, .doc-reg-4-1, .doc-reg-4-2, .doc-reg-5-1, .doc-reg-5-2, .doc-reg-6-1, .doc-reg-6-2 {
+    display: flex;
+    width: 100%;
+}
+
+.doc-reg-1-1, .doc-reg-1-2, .doc-reg-1-3, .doc-reg-2-1, .doc-reg-2-2, .doc-reg-3-1, .doc-reg-3-2, .doc-reg-4-1, .doc-reg-6-1, .doc-reg-6-2 {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+}
+
+.doc-reg-4-2 {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+}
+
+.doc-reg-5, .doc-reg-5-1, .doc-reg-5-2, .doc-reg-6 {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+}
+
+.doc-reg-label {
+    font-weight: bold;
+    font-size: large;
+}
+
+.doc-select {
+    margin: 0;
+    padding: 1px 2px 1px 2px;
+    font-family: monospace;
+    width: 307px;
+    
+}
+
+.doc-reg-1-1, .doc-reg-1-2, .doc-reg-1-3, .doc-reg-2-1, .doc-reg-2-2, .doc-reg-3-1, .doc-reg-3-2, .doc-reg-4-1, .doc-reg-4-2, .doc-reg-5-1, .doc-reg-5-2, .doc-reg-6-1, .doc-reg-6-2 {
+    margin-left: 2rem;
+    margin-right: 2rem;
+}
+.doc-reg-5 {
+    border-bottom: 3px solid white;
+}
+
+.doc-reg-5-2 {
+    margin-bottom: 1rem;
+}
+
+.doc-reg-6-1 {
+    margin-top: 1rem;
+}
+
+.doc-reg-6-2 {
+    margin-bottom: 1rem;
+}
+
+.doc-input {
+    width: 300px
+}

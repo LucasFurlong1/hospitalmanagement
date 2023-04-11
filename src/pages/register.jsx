@@ -150,7 +150,7 @@ export const Register = (props) => {
                         </select>
                     </div>
                     <div className="pat-reg-3-2">
-                        <label className="pat-reg-label">Phone</label>
+                        <label className="pat-reg-label">Phone Number</label>
                         <input className="pat-reg-input" type="tel" onChange={(e) => { setPhone(e.target.value) }} />
                     </div>
                 </div>

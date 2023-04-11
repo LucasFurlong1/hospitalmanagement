@@ -9,6 +9,7 @@ import { DocDiag } from "./docdiag"
 import { DocPres } from "./docpres"
 import { PatientInfo } from "./patientInfo"
 import { useNavigate } from "react-router-dom";
+import Admin from "./admin";
 
 
 
@@ -23,9 +24,10 @@ const App = (props) => {
 
   return (
     <div className="App">
-      <button className="logout-button" onClick={() => {handleLogout()}}>Log-out</button>
+      <button className="logout-button" onClick={() => {handleLogout()}} style={{fontFamily: "monospace", fontSize: "xlarge"}}>Log-out</button>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/admin" element={<Admin />} />
         <Route path="/doctor" element={<Doctor />} />
         <Route path="/register" element={<Register />} />
         <Route path="/patient" element={<Patient />} />
