@@ -17,7 +17,6 @@ export const Doctor = () => {
     const patients = async () => {
         await fetch(`https://localhost:44304/api/Patient/GetPatientsByDoctor?doctorUsername=${location.state.username}`).then(response => response.json()).then((response) => {
             setPatient(response)
-            console.log(response)
         })
     }
 

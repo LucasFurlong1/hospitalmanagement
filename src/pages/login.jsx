@@ -6,8 +6,7 @@ export const Login = (props) => {
     const navigate = useNavigate()
 
     const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(username)
+        e.preventDefault()
         fetch("https://localhost:44304/api/Security/LoginRequest", {
             method: 'POST',
             headers: {

@@ -114,6 +114,14 @@
     align-content: flex-start;
 }
 
+.doc-reg-2-2, .doc-reg-3-2 {
+    margin-right: 2rem;
+}
+
+.doc-reg-3, .doc-reg-2, .doc-reg-1, .doc-reg-4 {
+    margin-bottom: 0.4rem;
+}
+
 .doc-reg-4-2 {
     flex-direction: column;
     align-items: center;
@@ -137,11 +145,11 @@
     margin: 0;
     padding: 1px 2px 1px 2px;
     font-family: monospace;
-    width: 307px;
+    width: 305px;
     
 }
 
-.doc-reg-1-1, .doc-reg-1-2, .doc-reg-1-3, .doc-reg-2-1, .doc-reg-2-2, .doc-reg-3-1, .doc-reg-3-2, .doc-reg-4-1, .doc-reg-4-2, .doc-reg-5-1, .doc-reg-5-2, .doc-reg-6-1, .doc-reg-6-2 {
+.doc-reg-1-1, .doc-reg-1-2, .doc-reg-1-3, .doc-reg-2-1, .doc-reg-3-1, .doc-reg-4-1, .doc-reg-4-2, .doc-reg-5-1, .doc-reg-5-2, .doc-reg-6-1, .doc-reg-6-2 {
     margin-left: 2rem;
     margin-right: 2rem;
 }
@@ -155,6 +163,7 @@
 
 .doc-reg-6-1 {
     margin-top: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .doc-reg-6-2 {
@@ -162,5 +171,39 @@
 }
 
 .doc-input {
-    width: 300px
+    width: 300px;
+    border-radius: 5px;
+    border: none;
+}
+
+.doc-e-name, .doc-e-number {
+    width: 92.5%;
+    border-radius: 5px;
+    border: none;
+}
+
+.doc-long {
+    width: 92.5%;
+    resize: none;
+    height: 50px;
+    border-radius: 5px;
+    border: none;
+}
+
+.doc-email {
+    width: 92.5%;
+    border-radius: 5px;
+    border: none;
+}
+
+.doc-select-2 {
+    margin: 0;
+    padding: 1px 2px 1px 2px;
+    font-family: monospace;
+    width: 480px;
+}
+
+.doc-date {
+    border-radius: 5px;
+    border: none;
 }

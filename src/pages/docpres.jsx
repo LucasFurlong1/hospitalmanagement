@@ -80,7 +80,16 @@ export const DocPres = () => {
     }
 
     const handleUpdate = () => {
-        if(id !== "") {
+        if(medName === "") {
+            alert("Medication name cannot be empty!")
+        }
+        else if(dosage === "") {
+            alert("Dosage cannot be empty!")
+        }
+        else if(instructions === "") {
+            alert("You must include instructions!")
+        }
+        else if(id !== "") {
             fetch(`https://localhost:44304/api/Prescription/UpdatePrescription`, {
                 method: 'PUT',
                 headers: {
@@ -105,6 +114,9 @@ export const DocPres = () => {
                     alert("Update failure!")
                 }
             })
+        }
+        else if(patientName === ""){
+            alert("Impossible to create!")
         }
         else{
             console.log(patientName)

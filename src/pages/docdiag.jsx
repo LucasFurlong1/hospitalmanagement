@@ -20,7 +20,6 @@ export const DocDiag = () => {
     useEffect(() => {
         fetch(`https://localhost:44304/api/Patient/GetPatientsByDoctor?doctorUsername=${location.state.username}`).then(response => response.json()).then((response) => {
             setPatients(response)
-            console.log(response[0].Username)
             patientName = response[0].Username
             getDiagnoses(patientName)
         })
@@ -28,7 +27,6 @@ export const DocDiag = () => {
 
     const getDiagnoses = (e) => {
         fetch(`https://localhost:44304/api/Diagnosis/GetDiagnosesByPatient?patientUsername=${e}`).then(response => response.json()).then((response) => {
-            console.log(response)
             setDiagnoses(response)
         })
         patientName = e
@@ -55,7 +53,6 @@ export const DocDiag = () => {
             }
             else if (result === true) {
                 id = e.slice(5)
-                console.log(id)
                 fetch(`https://localhost:44304/api/Diagnosis/GetDiagnosisByID?diagnosisId=${id}`).then(response => response.json()).then((response) => {
                     setDiagName(response[0].Diagnosis_Name)
                     setTreatment(response[0].Diagnosis_Treatment)
@@ -96,8 +93,16 @@ export const DocDiag = () => {
     }
 
     const handleUpdate = () => {
-        console.log(id)
-        if(id !== "") {
+        if(diagName === ""){
+            alert("Diagnosis name cannot be empty!")
+        }
+        else if(description === "") {
+            alert("Description of diagnosis cannot be empty!")
+        }
+        else if(treatment === "") {
+            alert("Treatment of diagnosis cannot be empty!")
+        }
+        else if(id !== "") {
             fetch(`https://localhost:44304/api/Diagnosis/UpdateDiagnosis`, {
                 method: 'PUT',
                 headers: {
@@ -125,8 +130,10 @@ export const DocDiag = () => {
                 }
             })
         }
+        else if(patientName === ""){
+            alert("Impossible to create!")
+        }
         else{
-            console.log(patientName)
             fetch(`https://localhost:44304/api/Diagnosis/CreateDiagnosis`, {
                 method: 'PUT',
                 headers: {
