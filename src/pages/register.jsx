@@ -49,7 +49,7 @@ export const Register = (props) => {
             alert('Number cannot be empty!')
         }
         else if(isNaN(phone) || phone.length<10) {
-            alert('Emergency number must be a number or at least 10 digits!')
+            alert('Phone number must be a number or at least 10 digits!')
         }
         else if(email === ""){
             alert('Email cannot be empty!')

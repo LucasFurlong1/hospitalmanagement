@@ -6,12 +6,10 @@ namespace ABC_Hospital_Web_Service.Services
 {
     /* To Do:
      * Check all updates and creates sqls for single quotes in field values
-     * Find cause of error at DataBaseConnection.Open();
      */
     public class SQLInterface
     {
         private string ConnectString;
-        OleDbConnection DataBaseConnection;
         private IConfiguration _appConfig;
 
         public SQLInterface(IConfiguration appConfig)
@@ -34,8 +32,6 @@ namespace ABC_Hospital_Web_Service.Services
             if (found)
             {
                 ConnectString = ConnectString.Replace("@", searchForDatabase);
-                DataBaseConnection = new OleDbConnection(ConnectString);
-                DataBaseConnection.Open();
             }
             else
             {
@@ -50,7 +46,8 @@ namespace ABC_Hospital_Web_Service.Services
 
             OleDbCommand command = new OleDbCommand();
 
-            command.Connection = DataBaseConnection;
+            command.Connection = new OleDbConnection(ConnectString);
+            command.Connection.Open();
             command.CommandText = sqlString;
 
             try
@@ -68,12 +65,17 @@ namespace ABC_Hospital_Web_Service.Services
                         user.Password = "";
                     }
                     reader.Close();
+                    command.Connection.Dispose();
                     return user;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                if (command.Connection != null && command.Connection.State == System.Data.ConnectionState.Open)
+                {
+                    command.Connection.Dispose();
+                }
             }
             return null;
         }
@@ -99,7 +101,8 @@ namespace ABC_Hospital_Web_Service.Services
                 "SELECT * FROM [Identity_Session] WHERE Username='" + username + "';";
 
             OleDbCommand command = new OleDbCommand();
-            command.Connection = DataBaseConnection;
+            command.Connection = new OleDbConnection(ConnectString);
+            command.Connection.Open();
             command.CommandText = sqlString;
 
             try
@@ -114,12 +117,17 @@ namespace ABC_Hospital_Web_Service.Services
                         session.SessionExpire = reader.GetDateTime(2);
                     }
                     reader.Close();
+                    command.Connection.Dispose();
                     return session;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                if (command.Connection != null && command.Connection.State == System.Data.ConnectionState.Open)
+                {
+                    command.Connection.Dispose();
+                }
             }
             return null;
         }
@@ -184,7 +192,8 @@ namespace ABC_Hospital_Web_Service.Services
                 "SELECT Username FROM [User] WHERE Username LIKE '" + partialUsername + "%' ORDER BY Username DESC;";
 
             OleDbCommand command = new OleDbCommand();
-            command.Connection = DataBaseConnection;
+            command.Connection = new OleDbConnection(ConnectString);
+            command.Connection.Open();
             command.CommandText = sqlString;
             try
             {
@@ -198,12 +207,17 @@ namespace ABC_Hospital_Web_Service.Services
                         digit = (int.Parse(temp) + 1).ToString();
                     }
                     reader.Close();
+                    command.Connection.Dispose();
                     return partialUsername + digit;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                if (command.Connection != null && command.Connection.State == System.Data.ConnectionState.Open)
+                {
+                    command.Connection.Dispose();
+                }
             }
             return "";
         }
@@ -234,7 +248,8 @@ namespace ABC_Hospital_Web_Service.Services
 
             OleDbCommand command = new OleDbCommand();
 
-            command.Connection = DataBaseConnection;
+            command.Connection = new OleDbConnection(ConnectString);
+            command.Connection.Open();
             command.CommandText = sqlString;
 
             try
@@ -259,12 +274,17 @@ namespace ABC_Hospital_Web_Service.Services
                         users.Add(temp);
                     }
                     reader.Close();
+                    command.Connection.Dispose();
                     return users;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                if (command.Connection != null &&command.Connection.State == System.Data.ConnectionState.Open)
+                {
+                    command.Connection.Dispose();
+                }
             }
             return new List<UserObject>();
 
@@ -276,7 +296,8 @@ namespace ABC_Hospital_Web_Service.Services
                 "SELECT * FROM [User] WHERE " + fieldName + "=\"" + value + "\" ORDER BY Username;";
 
             OleDbCommand command = new OleDbCommand();
-            command.Connection = DataBaseConnection;
+            command.Connection = new OleDbConnection(ConnectString);
+            command.Connection.Open();
             command.CommandText = sqlString;
 
             try
@@ -301,12 +322,17 @@ namespace ABC_Hospital_Web_Service.Services
                         users.Add(temp);
                     }
                     reader.Close();
+                    command.Connection.Dispose();
                     return users;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                if (command.Connection != null && command.Connection.State == System.Data.ConnectionState.Open)
+                {
+                    command.Connection.Dispose();
+                }
             }
             return new List<UserObject>();
         }
@@ -335,7 +361,8 @@ namespace ABC_Hospital_Web_Service.Services
                 "SELECT * FROM [Patient] ORDER BY Patient_Username;";
 
             OleDbCommand command = new OleDbCommand();
-            command.Connection = DataBaseConnection;
+            command.Connection = new OleDbConnection(ConnectString);
+            command.Connection.Open();
             command.CommandText = sqlString;
 
             try
@@ -352,12 +379,17 @@ namespace ABC_Hospital_Web_Service.Services
                         patients.Add(temp);
                     }
                     reader.Close();
+                    command.Connection.Dispose();
                     return patients;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                if (command.Connection != null && command.Connection.State == System.Data.ConnectionState.Open)
+                {
+                    command.Connection.Dispose();
+                }
             }
             return new List<PatientObject>();
         }
@@ -368,7 +400,8 @@ namespace ABC_Hospital_Web_Service.Services
                 "SELECT * FROM [Patient] WHERE " + fieldName + "=\"" + value + "\" ORDER BY Patient_Username;";
 
             OleDbCommand command = new OleDbCommand();
-            command.Connection = DataBaseConnection;
+            command.Connection = new OleDbConnection(ConnectString);
+            command.Connection.Open();
             command.CommandText = sqlString;
 
             try
@@ -385,12 +418,17 @@ namespace ABC_Hospital_Web_Service.Services
                         patients.Add(temp);
                     }
                     reader.Close();
+                    command.Connection.Dispose();
                     return patients;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                if (command.Connection != null && command.Connection.State == System.Data.ConnectionState.Open)
+                {
+                    command.Connection.Dispose();
+                }
             }
             return new List<PatientObject>();
         }
@@ -419,7 +457,8 @@ namespace ABC_Hospital_Web_Service.Services
                 "SELECT * FROM [Doctor] ORDER BY Doctor_Username;";
 
             OleDbCommand command = new OleDbCommand();
-            command.Connection = DataBaseConnection;
+            command.Connection = new OleDbConnection(ConnectString);
+            command.Connection.Open();
             command.CommandText = sqlString;
 
             try
@@ -437,12 +476,17 @@ namespace ABC_Hospital_Web_Service.Services
                         doctors.Add(temp);
                     }
                     reader.Close();
+                    command.Connection.Dispose();
                     return doctors;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                if (command.Connection != null && command.Connection.State == System.Data.ConnectionState.Open)
+                {
+                    command.Connection.Dispose();
+                }
             }
             return new List<DoctorObject>();
         }
@@ -453,7 +497,8 @@ namespace ABC_Hospital_Web_Service.Services
                 "SELECT * FROM [Doctor] WHERE " + fieldName + "=\"" + value + "\" ORDER BY Doctor_Username;";
 
             OleDbCommand command = new OleDbCommand();
-            command.Connection = DataBaseConnection;
+            command.Connection = new OleDbConnection(ConnectString);
+            command.Connection.Open();
             command.CommandText = sqlString;
 
             try
@@ -471,12 +516,17 @@ namespace ABC_Hospital_Web_Service.Services
                         doctors.Add(temp);
                     }
                     reader.Close();
+                    command.Connection.Dispose();
                     return doctors;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                if (command.Connection != null && command.Connection.State == System.Data.ConnectionState.Open)
+                {
+                    command.Connection.Dispose();
+                }
             }
             return new List<DoctorObject>();
         }
@@ -499,6 +549,7 @@ namespace ABC_Hospital_Web_Service.Services
                 List<PrescriptionObject> temp = RetrievePrescriptionsFiltered("Prescription_ID", prescription.Prescription_ID);
                 if (temp.Count > 0 && temp[0].Equals(prescription))
                 {
+                    UpdatePatientInteractDate(prescription.Patient_Username);
                     return true;
                 }
             }
@@ -523,6 +574,7 @@ namespace ABC_Hospital_Web_Service.Services
                 List<PrescriptionObject> temp = RetrievePrescriptionsFiltered("Prescription_ID", prescription.Prescription_ID);
                 if (temp.Count > 0 && temp[0].Equals(prescription))
                 {
+                    UpdatePatientInteractDate(prescription.Patient_Username);
                     return true;
                 }
             }
@@ -552,7 +604,8 @@ namespace ABC_Hospital_Web_Service.Services
                 "SELECT * FROM [Prescription] ORDER BY Prescribed_Date;";
 
             OleDbCommand command = new OleDbCommand();
-            command.Connection = DataBaseConnection;
+            command.Connection = new OleDbConnection(ConnectString);
+            command.Connection.Open();
             command.CommandText = sqlString;
 
             try
@@ -574,12 +627,17 @@ namespace ABC_Hospital_Web_Service.Services
                         prescriptions.Add(temp);
                     }
                     reader.Close();
+                    command.Connection.Dispose();
                     return prescriptions;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                if (command.Connection != null && command.Connection.State == System.Data.ConnectionState.Open)
+                {
+                    command.Connection.Dispose();
+                }
             }
             return new List<PrescriptionObject>();
         }
@@ -590,7 +648,8 @@ namespace ABC_Hospital_Web_Service.Services
                 "SELECT * FROM [Prescription] WHERE " + fieldName + "=\"" + value + "\" ORDER BY Prescribed_Date;";
 
             OleDbCommand command = new OleDbCommand();
-            command.Connection = DataBaseConnection;
+            command.Connection = new OleDbConnection(ConnectString);
+            command.Connection.Open();
             command.CommandText = sqlString;
 
             try
@@ -612,12 +671,17 @@ namespace ABC_Hospital_Web_Service.Services
                         doctors.Add(temp);
                     }
                     reader.Close();
+                    command.Connection.Dispose();
                     return doctors;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                if (command.Connection != null && command.Connection.State == System.Data.ConnectionState.Open)
+                {
+                    command.Connection.Dispose();
+                }
             }
             return new List<PrescriptionObject>();
         }
@@ -639,6 +703,7 @@ namespace ABC_Hospital_Web_Service.Services
                 List<DiagnosisObject> temp = RetrieveDiagnosesFiltered("Diagnosis_ID", diagnosis.Diagnosis_ID);
                 if(temp.Count > 0 && temp[0].Equals(diagnosis))
                 {
+                    UpdatePatientInteractDate(diagnosis.Patient_Username);
                     return true;
                 }
             }
@@ -663,6 +728,7 @@ namespace ABC_Hospital_Web_Service.Services
                 List<DiagnosisObject> temp = RetrieveDiagnosesFiltered("Diagnosis_ID", diagnosis.Diagnosis_ID);
                 if (temp.Count > 0 && temp[0].Equals(diagnosis))
                 {
+                    UpdatePatientInteractDate(diagnosis.Patient_Username);
                     return true;
                 }
             }
@@ -690,7 +756,8 @@ namespace ABC_Hospital_Web_Service.Services
                 "SELECT * FROM [Diagnosis] ORDER BY Diagnosis_Date;";
 
             OleDbCommand command = new OleDbCommand();
-            command.Connection = DataBaseConnection;
+            command.Connection = new OleDbConnection(ConnectString);
+            command.Connection.Open();
             command.CommandText = sqlString;
 
             try
@@ -713,12 +780,17 @@ namespace ABC_Hospital_Web_Service.Services
                         diagnoses.Add(temp);
                     }
                     reader.Close();
+                    command.Connection.Dispose();
                     return diagnoses;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                if (command.Connection != null && command.Connection.State == System.Data.ConnectionState.Open)
+                {
+                    command.Connection.Dispose();
+                }
             }
             return new List<DiagnosisObject>();
         }
@@ -729,7 +801,8 @@ namespace ABC_Hospital_Web_Service.Services
                 "SELECT * FROM [Diagnosis] WHERE " + fieldName + "=\"" + value + "\" ORDER BY Diagnosis_Date;";
 
             OleDbCommand command = new OleDbCommand();
-            command.Connection = DataBaseConnection;
+            command.Connection = new OleDbConnection(ConnectString);
+            command.Connection.Open();
             command.CommandText = sqlString;
 
             try
@@ -752,12 +825,17 @@ namespace ABC_Hospital_Web_Service.Services
                         diagnoses.Add(temp);
                     }
                     reader.Close();
+                    command.Connection.Dispose();
                     return diagnoses;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                if (command.Connection != null && command.Connection.State == System.Data.ConnectionState.Open)
+                {
+                    command.Connection.Dispose();
+                }
             }
             return new List<DiagnosisObject>();
         }
@@ -767,7 +845,8 @@ namespace ABC_Hospital_Web_Service.Services
 
             OleDbCommand command = new OleDbCommand();
 
-            command.Connection = DataBaseConnection;
+            command.Connection = new OleDbConnection(ConnectString);
+            command.Connection.Open();
             command.CommandText = sqlString;
 
             try
@@ -778,9 +857,21 @@ namespace ABC_Hospital_Web_Service.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                if (command.Connection != null && command.Connection.State == System.Data.ConnectionState.Open)
+                {
+                    command.Connection.Dispose();
+                }
                 return false;
             }
+            command.Connection.Dispose();
             return true;
+        }
+
+        private void UpdatePatientInteractDate(string username)
+        {
+            string sqlString = "UPDATE [Patient] SET Last_Interacted = '" + DateTime.Today +
+                "' WHERE Patient_Username = '" + username + "';";
+            RunNonQuerySQL(sqlString);
         }
     }
 }

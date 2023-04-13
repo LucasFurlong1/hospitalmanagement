@@ -5,9 +5,6 @@ using System.Text.RegularExpressions;
 
 namespace ABC_Hospital_Web_Service.Services
 {
-    /* To Do:
-     * Need to get username generation working to accept last names like Van Dyke or Smith-Jones
-     */
     public class UserService
     {
         private SQLInterface _sqlservice;
@@ -87,14 +84,23 @@ namespace ABC_Hospital_Web_Service.Services
         {
             string username = "";
 
+            // Remove any extra characters such as punctuation
+            userFullName = Regex.Replace(userFullName, "[^ A-z]", "");
+
             // Verify that the name is in a valid format
             if (Regex.IsMatch(userFullName, @"(\w+\s(\w+\.?\s)*\w\w+)"))
             {
-                // Split User's full name
-                string[] temp = userFullName.Split(" ");
+                // Split User's full name into chunk
+                List<string> temp = userFullName.Split(" ").ToList<string>();
 
                 // Get first character of User's first name
                 username = temp.First()[0].ToString();
+                
+                // Combine all chunks but the first two together (as those are first and middle names)
+                for(int i = temp.Count()-2; i > 1; i--)
+                {
+                    temp[temp.Count() - 1] = temp[i] + temp[temp.Count() - 1];
+                }
 
                 // Get up to 7 characters from last name
                 if (temp.Last().Length > 7)
