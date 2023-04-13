@@ -131,7 +131,7 @@ const Admin = () => {
                 <div className='doc-reg-2'>
                     <div className='doc-reg-2-1'>
                         <label className='doc-reg-label'>Password</label>
-                        <input className='doc-input' onChange={(e) => {setPass(e.target.value)}}/>
+                        <input className='doc-input' onChange={(e) => {setPass(e.target.value)}} type='password'/>
                     </div>
                     <div className='doc-reg-2-2'>
                         <label className='doc-reg-label'>Gender</label>

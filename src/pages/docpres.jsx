@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import "../CSS/presform.css";
 
 let id = ""
@@ -7,6 +7,7 @@ let patientName = ""
 
 export const DocPres = () => {
 
+    let navigate = useNavigate()
     let location = useLocation()
     const [patients, setPatients] = useState([])
     const [prescriptions, setPrescriptions] = useState([])
@@ -17,12 +18,16 @@ export const DocPres = () => {
     const [filled, setFilled] = useState(false)
 
     useEffect(() => {
-        fetch(`https://localhost:44304/api/Patient/GetPatientsByDoctor?doctorUsername=${location.state.username}`).then(response => response.json()).then((response) => {    
-            setPatients(response)
-            console.log(response[0].Username)
-            patientName = response[0].Username
-            getPrescriptions(patientName)
-        })
+        try{
+            fetch(`https://localhost:44304/api/Patient/GetPatientsByDoctor?doctorUsername=${location.state.username}`).then(response => response.json()).then((response) => {    
+                setPatients(response)
+                patientName = response[0].Username
+                getPrescriptions(patientName)
+            })
+        } catch(error){
+            alert(error)
+            navigate("/")
+        }
     }, [])
 
     const getPrescriptions = (e) => {
@@ -107,7 +112,8 @@ export const DocPres = () => {
                 },
                 )
             }).then(response => response.json()).then((response) => {
-                if(response===true){
+                console.log(response)
+                if(response[0].success===true){
                     alert("Update success!")
                 }
                 else{

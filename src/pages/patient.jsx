@@ -9,17 +9,19 @@ import MessageParser from "../MessageParser";
 import config from "../chatConfig";
 
 export const Patient = () => {
+    let navigate = useNavigate()
     let result = []
     const location = useLocation()
     const [doctor, setDoctor] = useState([])
 
     useEffect(() => {
+
         fetch(`https://localhost:44304/api/Patient/GetPatientInfo?patientUsername=${location.state.username}`).then(response => response.json()).then((response) => {
             return fetch(`https://localhost:44304/api/Doctor/GetDoctorInfo?doctorUsername=${response[0].Doctor_Username}`)
         }).then(response => response.json()).then((response) => {
-            console.log(response)
             setDoctor(response)
         })
+
     }, [])
 
 
@@ -30,7 +32,6 @@ export const Patient = () => {
             <div className="doctor-info-container">
                 <h2>Your Doctor:</h2>
                 {doctor.map((data) => {
-                    console.log(doctor)
                     return (
                         <div className="doctor-info-main-container">
                             <div className="doc-info-1">
@@ -52,7 +53,8 @@ export const Patient = () => {
                 })}
             </div>
             <Chatbot config={config} actionProvider={ActionProvider} messageParser={MessageParser} />
-            <SideNavBar props={location.state.username}/>
+            <SideNavBar props={location.state.username} />
+
         </div>
     );
 }

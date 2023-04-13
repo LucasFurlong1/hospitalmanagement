@@ -11,11 +11,8 @@ import { PatientInfo } from "./patientInfo"
 import { useNavigate } from "react-router-dom";
 import Admin from "./admin";
 
-
-
-
-
 const App = (props) => {
+  
   let navigate = useNavigate()
 
   const handleLogout = () => {
