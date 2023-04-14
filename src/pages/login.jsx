@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { Link, useNavigate } from 'react-router-dom'
+import App from "./App";
 export const Login = (props) => {
     const [username, setUsername] = useState('');
     const [pass, setPass] = useState('');
@@ -20,12 +21,18 @@ export const Login = (props) => {
             if (response === true) {
                 fetch(`https://localhost:44304/api/User/GetUser?username=${username}`).then(res => res.json()).then((res) => {
                     if(res[0].Account_Type === "D"){
+                        localStorage.setItem("username", username)
+                        localStorage.setItem("userLoggedIn", true)
                         navigate("/doctor", {state: {username}})
                     }
                     else if(res[0].Account_Type === "P"){
+                        localStorage.setItem("username", username)
+                        localStorage.setItem("userLoggedIn", true)
                         navigate("/patient", {state: {username,userAuth:true}})
                     }
                     else if(res[0].Account_Type === "A"){
+                        localStorage.setItem("username", username)
+                        localStorage.setItem("userLoggedIn", true)
                         navigate("/admin")
                     }
                 })
