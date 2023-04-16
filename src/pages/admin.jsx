@@ -25,6 +25,8 @@ const Admin = () => {
     useEffect(() => {
         setDate('1900-01-01')
         setGender("M")
+        setDepartment("Emergency")
+        setDegree("MD")
     }, [])
 
     const handleSubmit = () => {
