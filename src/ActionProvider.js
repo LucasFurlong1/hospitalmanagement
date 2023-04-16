@@ -22,7 +22,7 @@ class ActionProvider {
   }
 
 
-  loginErrorHandler= () => {
+  loginErrorHandler = () => {
     const message = this.createChatBotMessage("You have already logged in!")
     this.setChatbotMessage(message)
   }
@@ -30,13 +30,13 @@ class ActionProvider {
   userMessageErrorHandler = () => {
     const message = this.createChatBotMessage("I'm sorry... I don't understand. Let me reiterate!")
     this.setChatbotMessage(message)
-    if(loggedIn===false){
+    if (loggedIn === false) {
       const message = this.createChatBotMessage('Hello, enter your name like this "my name is alex"')
       this.setChatbotMessage(message)
     }
-    else{
+    else {
       console.log(prevMessage)
-      for(const element of prevMessage){
+      for (const element of prevMessage) {
         const message = this.createChatBotMessage(element.message)
         this.setChatbotMessage(message)
       }
@@ -61,7 +61,7 @@ class ActionProvider {
     })
 
     prevMessage = []
-    this.state = {loginID: Math.random()}
+    this.state = { loginID: Math.random() }
     const options = {
       method: 'POST',
       headers: {
@@ -70,9 +70,9 @@ class ActionProvider {
         Authorization: `token ${authToken}`,
         'x-api-key': apiKey
       },
-      body: JSON.stringify({id: this.state.loginID.toString(), name: props, email: 'string', email_verified: true})
+      body: JSON.stringify({ id: this.state.loginID.toString(), name: props, email: 'string', email_verified: true })
     };
-    
+
 
     console.log(options.body)
 
@@ -99,7 +99,7 @@ class ActionProvider {
         Authorization: usertoken,
         'x-api-key': apiKey
       },
-      body: JSON.stringify({conversation_id: 'a', message: props})
+      body: JSON.stringify({ conversation_id: 'a', message: props })
     };
 
     fetch('https://portal.your.md/v3/chat', options)
@@ -127,25 +127,46 @@ class ActionProvider {
         Authorization: usertoken,
         'x-api-key': apiKey
       },
-      body: JSON.stringify({conversation_id: convotoken, message: props})
+      body: JSON.stringify({ conversation_id: convotoken, message: props })
     };
 
     fetch('https://portal.your.md/v3/chat', options)
-    .then(response => response.json())
-    .then((response) => {
-      console.log(response)
-      response.messages.forEach(element => {
-        let message = this.createChatBotMessage(element.value)
-        this.setChatbotMessage(message)
-        prevMessage.push(message)
+      .then(response => response.json())
+      .then((response) => {
+        console.log(response)
+        response.messages.forEach(element => {
+          let message = this.createChatBotMessage(element.value)
+          this.setChatbotMessage(message)
+          prevMessage.push(message)
+        })
+        let checker = JSON.stringify(response.conversation_model.report)
+        if(checker !== "{}") {
+          console.log("hello")
+          response.conversation_model.report.possible_causes.forEach(element => {
+            let message = this.createChatBotMessage(element.name)
+            this.setChatbotMessage(message)
+            prevMessage.push(message)
+            message = this.createChatBotMessage(element.triage.triage_diagnostic)
+            this.setChatbotMessage(message)
+            prevMessage.push(message)
+            message = this.createChatBotMessage(element.triage.triage_message)
+            this.setChatbotMessage(message)
+            prevMessage.push(message)
+            message = this.createChatBotMessage(element.triage.triage_treatment)
+            this.setChatbotMessage(message)
+            prevMessage.push(message)
+            message = this.createChatBotMessage(element.triage.triage_worries)
+            this.setChatbotMessage(message)
+            prevMessage.push(message)
+          })
+        }
+        response.question.choices.forEach(element => {
+          let message = this.createChatBotMessage(element.id + " - " + element.label)
+          this.setChatbotMessage(message)
+          prevMessage.push(message)
+        })
       })
-      response.question.choices.forEach(element => {
-        let message = this.createChatBotMessage(element.id + " - " + element.label)
-        this.setChatbotMessage(message)
-        prevMessage.push(message)
-      })
-    })
-    .catch(err => console.error(err));
+      .catch(err => console.error(err));
   }
 
   logoutHandler = () => {
