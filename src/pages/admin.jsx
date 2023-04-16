@@ -24,6 +24,7 @@ const Admin = () => {
 
     useEffect(() => {
         setDate('1900-01-01')
+        setGender("M")
     }, [])
 
     const handleSubmit = () => {
