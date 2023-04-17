@@ -8,11 +8,6 @@ class MessageParser {
     }
 
     parse(message) {
-
-      console.log(this.state)
-
-      console.log(message)
-
       const lower = message.toLowerCase()
 
 
@@ -56,7 +51,6 @@ class MessageParser {
       //if you read this next area... im sorry
       //I could definitely do a switch here but I am too lazy to implement it 
       login = true
-      console.log(lastBotMessages)
       for(let i = 0; i<lastBotMessages.length; i++) {
         if(lastBotMessages[i].message.includes("is an indicator of whether you are")) {
           this.actionProvider.BMIHandler()
@@ -69,7 +63,6 @@ class MessageParser {
           break
         }
         if(login===true && lastBotMessages[i].message.includes(lower)){
-          console.log(i)
           this.actionProvider.chatHandler(lower)
           break
         } 

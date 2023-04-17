@@ -121,8 +121,7 @@ export const DocDiag = () => {
                 },
                 )
             }).then(response => response.json()).then((response) => {
-                console.log(response)
-                if(response===true){
+                if(response[0].success===true){
                     alert("Update success!")
                 }
                 else{
@@ -161,7 +160,6 @@ export const DocDiag = () => {
                 setResolved(false)
                 setAdmitted(false)
             }).catch((error) => {
-                console.log(error)
                 alert(error)
             })
         }
@@ -172,7 +170,6 @@ export const DocDiag = () => {
             fetch(`https://localhost:44304/api/Diagnosis/DeleteDiagnosis?diagnosis_ID=${id}`, {
                 method: 'DELETE'
             }).then((response) => {
-            console.log(response.ok)    
             if(response.ok===true){
                     alert("Delete pass!")
                     let element = document.getElementById('diag')

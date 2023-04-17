@@ -14,20 +14,21 @@ namespace ABC_Hospital_Web_Service.Controllers
         {
             _securityService = new SecurityService(appConfig);
         }
-
-        // Security Endpoints
+        
         [HttpPost("LoginRequest")]
         public ActionResult<bool> LoginRequest([FromBody] UserCredObject requestObj)
         {
             return _securityService.CheckUserCredentials(requestObj.Username, requestObj.Password);
         }
 
-        // For testing purposes, allows new password to be assigned to a user
+        // This endpoint is for testing purposes only, allows new password to be assigned to a user
+        // Included for convenience of grading, and is not a feature
         [HttpPost("UpdateCredentials")]
         public bool UpdateCredentials([FromBody] UserCredObject requestObj)
         {
             return _securityService.SaveNewCredentials(requestObj.Username, requestObj.Password);
         }
+
         [HttpGet("GetSessionExpirationTime")]
         public ActionResult<string> GetSessionExpirationTime(string username)
         {

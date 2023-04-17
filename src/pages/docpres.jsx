@@ -112,7 +112,6 @@ export const DocPres = () => {
                 },
                 )
             }).then(response => response.json()).then((response) => {
-                console.log(response)
                 if(response[0].success===true){
                     alert("Update success!")
                 }
@@ -125,7 +124,6 @@ export const DocPres = () => {
             alert("Impossible to create!")
         }
         else{
-            console.log(patientName)
             fetch(`https://localhost:44304/api/Prescription/CreatePrescription`, {
                 method: 'PUT',
                 headers: {
@@ -151,7 +149,6 @@ export const DocPres = () => {
                 setDate("1900-01-01")
                 setFilled(false)
             }).catch((error) => {
-                console.log(error)
                 alert(error)
             })
         }
@@ -162,7 +159,6 @@ export const DocPres = () => {
             fetch(`https://localhost:44304/api/Prescription/DeletePrescription?prescription_ID=${id}`, {
                 method: 'DELETE'
             }).then((response) => {
-            console.log(response.ok)    
             if(response.ok===true){
                     alert("Delete pass!")
                     let element = document.getElementById('pres')

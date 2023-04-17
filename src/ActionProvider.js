@@ -35,7 +35,6 @@ class ActionProvider {
       this.setChatbotMessage(message)
     }
     else {
-      console.log(prevMessage)
       for (const element of prevMessage) {
         const message = this.createChatBotMessage(element.message)
         this.setChatbotMessage(message)
@@ -73,8 +72,6 @@ class ActionProvider {
       body: JSON.stringify({ id: this.state.loginID.toString(), name: props, email: 'string', email_verified: true })
     };
 
-
-    console.log(options.body)
 
     fetch('https://portal.your.md/v4/login', options)
       .then(response => response.json())
@@ -133,7 +130,6 @@ class ActionProvider {
     fetch('https://portal.your.md/v3/chat', options)
       .then(response => response.json())
       .then((response) => {
-        console.log(response)
         response.messages.forEach(element => {
           let message = this.createChatBotMessage(element.value)
           this.setChatbotMessage(message)
@@ -141,7 +137,6 @@ class ActionProvider {
         })
         let checker = JSON.stringify(response.conversation_model.report)
         if(checker !== "{}") {
-          console.log("hello")
           response.conversation_model.report.possible_causes.forEach(element => {
             let message = this.createChatBotMessage(element.name)
             this.setChatbotMessage(message)

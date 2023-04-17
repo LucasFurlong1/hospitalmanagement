@@ -91,7 +91,6 @@ const Admin = () => {
                     "password": pass
                 })
             }).then(response => response.json()).then((response) => {
-                console.log(response)
                 if(response[0].str !== ""){
                     alert(`Your username is ${response[0].str}`)
                     navigate("/")

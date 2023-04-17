@@ -22,7 +22,6 @@ const ChatResponse = (props) => {
         axios.request(options)
     }, [])
 
-    console.log(props)
     return (
         <div></div>
     );

@@ -8,7 +8,10 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "http://localhost:3000/patient",
+            "url": "http://localhost:3000/",
+            "runtimeArgs": [
+                "--disable-web-security"
+              ],
             "webRoot": "${workspaceFolder}"
         }
     ]

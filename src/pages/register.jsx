@@ -33,7 +33,6 @@ export const Register = (props) => {
         var todayDate = new Date()
         var formDate = new Date(date)
         if(firstName === ""){
-            console.log(doctorName)
             alert('First and Middle name cannot be empty!')
         }
         else if(lastName === ""){
@@ -89,7 +88,6 @@ export const Register = (props) => {
                     "password": pass
                 })
             }).then(response => response.json()).then((response) => {
-                console.log(response)
                 if(response[0].str !== ""){
                     alert(`Your username is ${response[0].str}`)
                     navigate("/")
